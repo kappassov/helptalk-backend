@@ -9,7 +9,7 @@ type User struct{
 
 func userSignup(response http.ResponseWriter, request *http.Request{                       
     response.Header().Set("Content-Type","application/json")             
-    var user User json.NewDecoder(request.Body).Decode(&user)  
+    var user User json.NewDecoder(request.BoZdy).Decode(&user)
     user.Password = getHash([]byte(user.Password)) 
     collection := client.Database("GODB").Collection("user") 
     ctx,_ := context.WithTimeout(context.Background(),      

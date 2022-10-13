@@ -2,7 +2,19 @@ package main
 
 import (
 	"net/http"
-	"os"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/jinzhu/gorm"
+	"fmt"
+)
+
+var db *gorm.DB
+
+const (
+    HOST = "seniordb.csmmqn9yk8xp.eu-north-1.rds.amazonaws.com"
+    PORT = 5432
+    USER = "postgres"
+    PASSWORD = "seniorproject"
+    DBNAME = "seniordb"
 )
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -10,13 +22,22 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "3000"
+	dbUrl := fmt.Sprintf(
+        "host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+        HOST, PORT, USER, PASSWORD, DBNAME,
+    )
+	fmt.Println(dbUrl)
+	db, err := gorm.Open("postgres", dbUrl)
+	if err != nil {
+		panic("failed to connect database")
 	}
+	fmt.Println("Connected!")
+	
+	defer db.Close()
 
+	
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", indexHandler)
-	http.ListenAndServe(":"+port, mux)
+	http.ListenAndServe(":8090", mux)
 }

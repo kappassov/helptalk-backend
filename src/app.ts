@@ -1,15 +1,22 @@
-import bodyParser from "body-parser";
-import express from "express";
+import * as bodyParser from "body-parser";
+import express = require('express');
 import 'dotenv/config'
+import { connect } from "./db.connect";
 
 class App {
 
     public express: express.Application;
+    private db: any = {};
 
     constructor() {
         this.express = express();
         this.middleware();
         this.routes();
+        this.db = connect();
+        // For Development
+        this.db.sequelize.sync({ force: true }).then(() => {
+            console.log("Drop and re-sync db.");
+        });
     }
 
     // Configure Express middleware.

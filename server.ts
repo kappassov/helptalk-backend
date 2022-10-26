@@ -1,10 +1,10 @@
+import { PrismaClient } from '@prisma/client'
+import authRouter from "./app/routes/auth";
 const express = require("express");
 const cors = require("cors");
 const app = express();
 
-// const corsOptions = {
-//   origin: "http://localhost:8081",
-// };
+const prisma = new PrismaClient();
 
 app.use(cors());
 
@@ -12,10 +12,7 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-
-app.get("/", (req, res) => {
-  res.json({ message: "Test assignment for Klika." });
-});
+app.use("/", authRouter);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

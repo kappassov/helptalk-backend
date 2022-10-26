@@ -1,0 +1,22 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["orderByAggregateGroup", "selectRelationCount", "referentialActions"]
+}
+
+model Role {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  users       User[]
+}
+
+model User {
+  email       String       @id @unique
+  password    String       
+  role        Role         @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  role_id     Int 
+}

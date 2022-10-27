@@ -7,8 +7,6 @@ import {book} from "./booking/appointment"
 
 const prisma = new PrismaClient();
 
-
-
 app.use(cors());
 
 app.use(express.json());

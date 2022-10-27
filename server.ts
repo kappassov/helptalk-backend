@@ -1,11 +1,11 @@
+import { PrismaClient } from '@prisma/client'
+import authRouter from "./app/routes/auth";
 const express = require("express");
 const cors = require("cors");
 const app = express();
 import {book} from "./booking/appointment"
 
-// const corsOptions = {
-//   origin: "http://localhost:8081",
-// };
+const prisma = new PrismaClient();
 
 
 
@@ -14,6 +14,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
+
+app.use("/", authRouter);
 
 app.use("/book", book)
 

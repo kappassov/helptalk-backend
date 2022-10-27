@@ -10,7 +10,7 @@ authRouter.post("/login", async(req: Request, res: Response) => {
       return res.status(400).json({ errors: errors.array() });
     }
     try {
-      const user = req.body;
+      const user = req.query;
       const role = await UserController.login(user);
       return res.status(201).json(role);
     } catch (error: any) {

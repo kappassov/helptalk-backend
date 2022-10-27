@@ -6,7 +6,6 @@ import config from "../config/config";
 export type User = {
     email: string;
     password: string;
-    role_id: number;
   };
 
 class UserController {
@@ -16,11 +15,11 @@ class UserController {
     
     const db_result = await prisma.user.findUnique({
         where: {
-            email,
+            email: email,
         },
     });
     
-    if (db_result != null && db_result.password != password) {
+    if (db_result == null || db_result.password != password) {
         return {"false": "0"};
     }
   
@@ -30,8 +29,14 @@ class UserController {
     config.jwtSecret,
     { expiresIn: "1h" }
     );
+
+    const role = await prisma.role.findUnique({
+        where: {
+            id: db_result.role_id,
+        },
+    });
   
-    return {"true": db_result.role_id};
+    return {"true": role.name};
   };
 }
 

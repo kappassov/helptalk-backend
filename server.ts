@@ -3,7 +3,7 @@ import authRouter from "./app/routes/auth";
 const express = require("express");
 const cors = require("cors");
 const app = express();
-import {book} from "./booking/appointment"
+import bookingRouter from "./app/routes/booking"
 
 const prisma = new PrismaClient();
 
@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/", authRouter);
 
-app.use("/book", book)
+app.use("/", bookingRouter)
 
 const PORT = process.env.PORT || 8080;
 

@@ -100,6 +100,7 @@ model Appointment {
   room            Room        @relation(fields: [room_id], references: [id])
   room_id         Int
   appointed_at    DateTime
+  end_time        DateTime
   comments        String
   approved        Boolean
   ratings         Rating[]

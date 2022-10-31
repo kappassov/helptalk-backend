@@ -54,6 +54,7 @@ CREATE TABLE "Appointment" (
     "specialist_id" INTEGER NOT NULL,
     "room_id" INTEGER NOT NULL,
     "appointed_at" TIMESTAMP(3) NOT NULL,
+    "end_time" TIMESTAMP(3) NOT NULL,
     "comments" TEXT NOT NULL,
     "approved" BOOLEAN NOT NULL,
 

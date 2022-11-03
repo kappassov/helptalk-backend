@@ -1,0 +1,6 @@
+{
+  "version": 2,
+  "name": "helptalk-backend",
+  "builds": [{ "src": "server.ts", "use": "@vercel/node" }],
+  "routes": [{ "src": "/(.*)", "dest": "/server.ts" }]
+}

@@ -1,10 +1,12 @@
-import { PrismaClient } from "@prisma/client";
-import authRouter from "./app/routes/auth";
+
 import openaiRoute from "./app/routes/openai.route";
+import { PrismaClient } from '@prisma/client'
+import authRouter from "./app/routes/auth";
 const express = require("express");
 const cors = require("cors");
 const app = express();
-import { book } from "./booking/appointment";
+import bookingRouter from "./app/routes/booking"
+
 
 const prisma = new PrismaClient();
 
@@ -14,9 +16,10 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/book", book);
-app.use("/", authRouter);
+
 app.use("/", openaiRoute);
+app.use("/", authRouter);
+app.use("/", bookingRouter)
 
 const PORT = process.env.PORT || 8080;
 

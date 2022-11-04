@@ -159,4 +159,3 @@ async function check_conflicts(patient_id, specialist_id, start_time, end_time, 
             res.status(400).json("Conflicting appointment.")
     }
 }
-

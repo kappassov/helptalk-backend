@@ -14,7 +14,6 @@ export type User = {
 
 export type Patient = {
     email: string;
-    password: string;
     first_name: string;
     last_name: string;
 };
@@ -39,8 +38,29 @@ class UserController {
                 id: db_result.role_id,
             },
         });
+        let first_name, last_name;
+        if(role.id == 1){
+            const patient = await prisma.patient.findFirst({
+                where: {
+                    email: email,
+                },
+            });
+            first_name = patient.first_name;
+            last_name = patient.last_name;
+        }else if(role.id == 2){
+            const specialist = await prisma.specialist.findFirst({
+                where: {
+                    email: email,
+                },
+            });
+            first_name = specialist.first_name;
+            last_name = specialist.last_name;
+        }else{
+            first_name = "Admin";
+            last_name = "Admin";
+        }
     
-        return res.status(201).json({"result": true, "role": role.name, "token": this.jwt_creation(email)});
+        return res.status(201).json({"result": true, "role": role.name, "first_name": first_name, "last_name": last_name, "token": this.jwt_creation(email)});
     } catch (error: any) {
         return res.status(500).json(error.message);
     }
@@ -56,19 +76,20 @@ class UserController {
             data: {
                 email: email,
                 password: bcrypt.hashSync(password, 8),
-                role_id: role.id
+                role_id: role.id,
+                patients: {
+                    create: [
+                        {
+                            first_name: first_name,
+                            last_name: last_name,
+                        }
+                    ],
+                }
             },
         });
 
-        const patient =  prisma.patient.create({
-            data: {
-                first_name: first_name,
-                last_name: last_name,
-                email: user.email,
-            },
-        });
     
-        return res.status(201).json({"result": true, "token": this.jwt_creation(email)});
+        return res.status(201).json({"result": true, "name": first_name, "token": this.jwt_creation(email)});
     } catch (error: any) {
         return res.status(500).json(error.message);
     }

@@ -27,8 +27,8 @@ model Patient {
   id          Int       @id @default(autoincrement())
   first_name  String    
   last_name   String    
-  user        User      @relation(fields: [email], references: [email], onDelete: Cascade)
   email       String    
+  user        User      @relation(fields: [email], references: [email], onDelete: Cascade)
   appointments Appointment[]
 }
 

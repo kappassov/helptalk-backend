@@ -7,4 +7,6 @@ authRouter.post("/login", UserController.login);
 
 authRouter.post("/register/patient", UserController.register_patient);
 
+authRouter.post("/register/specialist", UserController.register_specialist);
+
 export default authRouter;

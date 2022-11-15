@@ -6,18 +6,6 @@ import config from "../config/config";
 
 import { resolvePtr } from "dns";
 
-
-export type User = {
-    email: string;
-    password: string;
-};
-
-export type Patient = {
-    email: string;
-    first_name: string;
-    last_name: string;
-};
-
 class UserController {
 
   static login = async (req: Request, res: Response) => {
@@ -47,7 +35,7 @@ class UserController {
             });
             first_name = patient.first_name;
             last_name = patient.last_name;
-        }else if(role.id == 2){
+        }else if(role.id == 3){
             const specialist = await prisma.specialist.findFirst({
                 where: {
                     email: email,
@@ -89,25 +77,75 @@ class UserController {
         });
 
     
-        return res.status(201).json({"result": true, "name": first_name, "token": this.jwt_creation(email)});
+        return res.status(201).json({"result": true, "first_name": first_name, "last_name": last_name, "token": this.jwt_creation(email)});
     } catch (error: any) {
         return res.status(500).json(error.message);
     }
   };
 
-  // Sing JWT, valid for 1 hour
-  static jwt_creation = (email: string) => {
-    return jwt.sign(
-        { email: email},
-        config.jwtSecret,
-        { expiresIn: "1h" }
-    );
+  
+
+  static register_specialist = async (req: Request, res: Response) => {
+    try {
+        const { email, password, first_name, last_name, specialization_name, price } = req.body;
+
+        const role = await prisma.role.findUnique({where: {name: "specialist"}});
+
+        if (email == null || password == null || first_name == null || last_name == null || specialization_name == null || price == null) {
+            return res.status(201).json({"result": false, "message": "Some parameters are missing!"});
+        }
+
+        const specialization = await prisma.specialization.findUnique({where: {name: specialization_name}});
+
+        if (specialization == null) {
+            return res.status(201).json({"result": false, "message": "Specialization is not found!"});
+        }
+
+        const user = await prisma.user.create({
+            data: {
+                email: email,
+                password: bcrypt.hashSync(password, 8),
+                role_id: role.id,
+                specialists: {
+                    create: [
+                        {
+                            first_name: first_name,
+                            last_name: last_name,
+                            price: price,
+                            confirmed: false,
+                            specialization: {
+                                connect: {
+                                    id: specialization.id
+                                }
+                            },
+                            documents: {
+                                create: [
+                                    {
+                                        path: "/documents/specialists/id",
+                                    }
+                                ]
+                            }
+                        },
+                    ],
+                }
+            },
+        });
+    
+        return res.status(201).json({"result": true, "first_name": first_name, "last_name": last_name, "token": this.jwt_creation(email)});
+    } catch (error: any) {
+        return res.status(500).json({"error": error.message});
+    }
+    
   };
 
-//   static register_specialist = async (specialist: Specialist) => {
-
-    
-//   };
+// Sing JWT, valid for 1 hour
+    static jwt_creation = (email: string) => {
+        return jwt.sign(
+            { email: email},
+            config.jwtSecret,
+            { expiresIn: "1h" }
+        );
+    };
 }
 
 export default UserController;

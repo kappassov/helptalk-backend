@@ -27,7 +27,7 @@ class UserController {
             },
         });
         let first_name, last_name;
-        if(role.id == 1){
+        if(role.name == "patient"){
             const patient = await prisma.patient.findFirst({
                 where: {
                     email: email,
@@ -35,7 +35,7 @@ class UserController {
             });
             first_name = patient.first_name;
             last_name = patient.last_name;
-        }else if(role.id == 3){
+        }else if(role.name == "specialist"){
             const specialist = await prisma.specialist.findFirst({
                 where: {
                     email: email,
@@ -87,18 +87,17 @@ class UserController {
 
   static register_specialist = async (req: Request, res: Response) => {
     try {
-        const { email, password, first_name, last_name, specialization_name, price } = req.body;
+        const { email, password, first_name, last_name, specialization_name, price, path } = req.body;
 
         const role = await prisma.role.findUnique({where: {name: "specialist"}});
 
         if (email == null || password == null || first_name == null || last_name == null || specialization_name == null || price == null) {
-            return res.status(201).json({"result": false, "message": "Some parameters are missing!"});
+            return res.status(500).json({"result": false, "message": "Some parameters are missing!"});
         }
-
         const specialization = await prisma.specialization.findUnique({where: {name: specialization_name}});
 
         if (specialization == null) {
-            return res.status(201).json({"result": false, "message": "Specialization is not found!"});
+            return res.status(404).json({"result": false, "message": "Specialization is not found!"});
         }
 
         const user = await prisma.user.create({
@@ -111,7 +110,7 @@ class UserController {
                         {
                             first_name: first_name,
                             last_name: last_name,
-                            price: price,
+                            price: Number(price),
                             confirmed: false,
                             specialization: {
                                 connect: {
@@ -121,7 +120,7 @@ class UserController {
                             documents: {
                                 create: [
                                     {
-                                        path: "/documents/specialists/id",
+                                        path: path
                                     }
                                 ]
                             }

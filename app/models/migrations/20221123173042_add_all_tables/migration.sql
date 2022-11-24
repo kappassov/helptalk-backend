@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Document" ALTER COLUMN "path" SET NOT NULL,
+ALTER COLUMN "path" SET DATA TYPE TEXT;

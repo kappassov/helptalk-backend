@@ -15,11 +15,12 @@ model Role {
 
 model User {
   email       String    @id @unique
-  password    String       
+  password    String
   role        Role      @relation(fields: [role_id], references: [id], onDelete: Cascade)
   role_id     Int 
   patients    Patient[]
   specialists Specialist[]
+  token       String
 }
 
 model Patient {

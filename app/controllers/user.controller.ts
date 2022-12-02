@@ -69,10 +69,8 @@ class UserController {
       console.log(role);
       const { accessToken, refreshToken } = Token.generateToken({
         email,
-        first_name,
-        last_name,
       });
-      console.log(accessToken);
+
       const user = await prisma.user.create({
         data: {
           email: email,
@@ -89,10 +87,12 @@ class UserController {
           token: accessToken,
         },
       });
+
       res.cookie("refreshToken", refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
+
       return res.status(201).json({
         result: true,
         first_name: first_name,
@@ -144,6 +144,7 @@ class UserController {
       const { accessToken, refreshToken } = Token.generateToken({
         email,
       });
+
       const user = await prisma.user.create({
         data: {
           email: email,

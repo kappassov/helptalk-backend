@@ -21,7 +21,6 @@ model User {
   token       String
   patients    Patient[]
   specialists Specialist[]
-  token       String
 }
 
 model Patient {

@@ -1,6 +1,7 @@
-import openaiRoute from "./app/routes/openai.route";
+import openaiRouter from "./app/routes/openai";
 import { PrismaClient } from "@prisma/client";
 import authRouter from "./app/routes/auth";
+import adminRouter from "./app/routes/admin";
 import cookieParser from "cookie-parser";
 import bookingRouter from "./app/routes/booking";
 import errorMiddleware from "./app/middlewares/error-middleware";
@@ -16,9 +17,12 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
-app.use("/", openaiRoute);
+
+app.use("/", openaiRouter);
 app.use("/", authRouter);
 app.use("/", bookingRouter);
+app.use("/", adminRouter);
+
 app.use(errorMiddleware);
 const PORT = process.env.PORT || 8080;
 

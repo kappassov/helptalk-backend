@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.ts",
-    "build": "npx tsc",
+    "build": "prisma generate --schema=./app/models/schema.prisma && npx tsc",
     "prisma:generate": "prisma generate --schema=./app/models/schema.prisma",
     "prisma:migrate": "prisma migrate dev --schema=./app/models/schema.prisma --name 'add_all_tables'"
   },

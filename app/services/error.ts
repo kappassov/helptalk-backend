@@ -1,3 +1,4 @@
+export {};
 class ApiError extends Error {
   status;
   errors;
@@ -15,4 +16,4 @@ class ApiError extends Error {
   }
 }
 
-export default ApiError;
+module.exports = ApiError;

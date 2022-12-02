@@ -1,8 +1,10 @@
-import express from "express";
-import controller from "../controllers/openai.controller";
-import authMiddleware from "../middlewares/auth-middleware";
-const router = express.Router();
+export {};
+const express = require("express");
+const OpenaiController  = require("../controllers/openai.controller");
+const authMiddleware = require("../middlewares/auth-middleware");
 
-router.post("/openai", authMiddleware, controller.sendPrompt);
+const openaiRouter = express.Router();
 
-export = router;
+openaiRouter.post("/openai", authMiddleware, OpenaiController.sendPrompt);
+
+module.exports = openaiRouter;

@@ -1,5 +1,6 @@
-import ApiError from "../services/error";
-import Token from "../services/token";
+export {};
+const ApiError = require("../services/error");
+const Token = require("../services/token");
 
 const AuthMiddleware = (req, res, next) => {
   try {
@@ -22,4 +23,4 @@ const AuthMiddleware = (req, res, next) => {
   }
 };
 
-export default AuthMiddleware;
+module.exports = AuthMiddleware;

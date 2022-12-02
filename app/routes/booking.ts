@@ -1,8 +1,9 @@
-import { Router } from "express";
-import BookingController from "../controllers/booking.controller";
-import authMiddleware from "../middlewares/auth-middleware";
+export {};
+const express = require("express");
+const BookingController  = require("../controllers/booking.controller");
+const authMiddleware = require("../middlewares/auth-middleware");
 
-const bookingRouter = Router();
+const bookingRouter = express.Router();
 
 bookingRouter.post("/book", authMiddleware, BookingController.create_booking);
 
@@ -38,4 +39,4 @@ bookingRouter.post(
   BookingController.approve_booking
 );
 
-export default bookingRouter;
+module.exports = bookingRouter;

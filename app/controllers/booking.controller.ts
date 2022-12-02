@@ -1,8 +1,9 @@
-import prisma from "../models/prisma-client";
-import { Request, Response } from "express";
+export {};
+const prisma = require("../models/prisma-client");
+
 
 class BookingController {
-    static get_all = async (req: Request, res: Response) => {
+    static get_all = async (req, res) => {
         try {
             const post = await prisma.appointment.findMany()
             res.status(201).json(post)
@@ -11,7 +12,7 @@ class BookingController {
         }
     }
 
-    static get_by_patient_id = async (req: Request, res: Response) => {
+    static get_by_patient_id = async (req, res) => {
         try {
             const { id } = req.body
             const post = await prisma.appointment.findMany({
@@ -25,7 +26,7 @@ class BookingController {
         }
     }
 
-    static get_by_specialist_id = async (req: Request, res: Response) => {
+    static get_by_specialist_id = async (req, res) => {
         try {
             const { id } = req.body
             const post = await prisma.appointment.findMany({
@@ -39,7 +40,7 @@ class BookingController {
         }
     }
 
-    static create_booking = async (req: Request, res: Response) => {
+    static create_booking = async (req, res) => {
         try {
             const { patient_id, specialist_id, appointed_at, comments } = req.body
             const start_time = new Date(appointed_at)
@@ -81,7 +82,7 @@ class BookingController {
         }
     }
 
-    static update_booking = async (req: Request, res: Response) => {
+    static update_booking = async (req, res) => {
         try {
             const { id, appointed_at, comments, approved } = req.body
             const post = await prisma.appointment.update({
@@ -98,7 +99,7 @@ class BookingController {
         }
     }
 
-    static delete_booking = async (req: Request, res: Response) => {
+    static delete_booking = async (req, res) => {
         try {
             const { id } = req.body
             const post = await prisma.appointment.delete({
@@ -110,7 +111,7 @@ class BookingController {
         }
     }
 
-    static approve_booking = async (req: Request, res: Response) => {
+    static approve_booking = async (req, res) => {
         try {
             const { id} = req.body
             const appointment = await prisma.appointment.findUnique({
@@ -132,7 +133,7 @@ class BookingController {
     }
 }
 
-export default BookingController;
+module.exports = BookingController;
 
 async function check_conflicts(patient_id, specialist_id, start_time, end_time, res) {
     var find = await prisma.appointment.findMany({

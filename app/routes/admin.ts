@@ -1,8 +1,9 @@
-import express from "express";
-import controller from "../controllers/admin.controller";
-import authMiddleware from "../middlewares/auth-middleware";
-const router = express.Router();
+export {};
+const express = require("express");
+const AdminController  = require("../controllers/admin.controller");
+const authMiddleware = require("../middlewares/auth-middleware");
+const adminRouter = express.Router();
 
-router.get("/admin", authMiddleware, controller.getSpecialists);
+adminRouter.get("/admin/getAll", authMiddleware, AdminController.getSpecialists);
 
-export = router;
+module.exports = adminRouter;

@@ -1,12 +1,12 @@
-import ApiError from "../services/error";
+export {};
+const ApiError = require("../services/error");
 
 const bcrypt = require("bcryptjs");
-import { Request, Response } from "express";
-import prisma from "../models/prisma-client";
-import Token from "../services/token";
+const Token = require("../services/token");
+const prisma = require("../models/prisma-client");
 
 class UserController {
-  static login = async (req: Request, res: Response) => {
+  static login = async (req, res) => {
     try {
       const { email, password } = req.body;
       const db_result = await prisma.user.findUnique({
@@ -61,10 +61,12 @@ class UserController {
     }
   };
 
-  static register_patient = async (req: Request, res: Response) => {
+  static register_patient = async (req, res) => {
     try {
       const { email, password, first_name, last_name } = req.body;
+      const temp = await prisma.role.findMany();
       const role = await prisma.role.findUnique({ where: { name: "patient" } });
+      return res.json(temp);
       const { accessToken, refreshToken } = Token.generateToken({
         email,
       });
@@ -100,7 +102,7 @@ class UserController {
     }
   };
 
-  static register_specialist = async (req: Request, res: Response) => {
+  static register_specialist = async (req, res) => {
     try {
       const {
         email,
@@ -217,4 +219,4 @@ class UserController {
   };
 }
 
-export default UserController;
+module.exports = UserController;

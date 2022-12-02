@@ -1,8 +1,10 @@
-import prisma from "../models/prisma-client";
-import { Request, Response } from "express";
+export {};
+const express = require("express");
+const prisma = require("../models/prisma-client");
+const Token = require("../services/token");
 
 class AdminController{
-    static getSpecialists = async (req: Request, res: Response) => {
+    static getSpecialists = async (req, res) => {
         try {
             const post = await prisma.specialist.findMany()
             res.status(201).json(post)
@@ -12,4 +14,4 @@ class AdminController{
     }
 }
 
-export default AdminController;
+module.exports = AdminController;

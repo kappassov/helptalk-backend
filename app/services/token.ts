@@ -30,4 +30,4 @@ class Token {
   }
 }
 
-export default new Token();
+module.exports = new Token();

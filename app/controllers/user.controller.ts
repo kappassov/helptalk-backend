@@ -64,9 +64,7 @@ class UserController {
   static register_patient = async (req: Request, res: Response) => {
     try {
       const { email, password, first_name, last_name } = req.body;
-      console.log(email, password);
       const role = await prisma.role.findUnique({ where: { name: "patient" } });
-      console.log(role);
       const { accessToken, refreshToken } = Token.generateToken({
         email,
       });
@@ -84,15 +82,13 @@ class UserController {
               },
             ],
           },
-          token: accessToken,
+          token: refreshToken,
         },
       });
-
       res.cookie("refreshToken", refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
-
       return res.status(201).json({
         result: true,
         first_name: first_name,
@@ -144,7 +140,6 @@ class UserController {
       const { accessToken, refreshToken } = Token.generateToken({
         email,
       });
-
       const user = await prisma.user.create({
         data: {
           email: email,
@@ -172,7 +167,7 @@ class UserController {
               },
             ],
           },
-          token: accessToken,
+          token: refreshToken,
         },
       });
 
@@ -187,7 +182,10 @@ class UserController {
     }
   };
 
-  async refresh(refreshToken) {
+  static loginByAccessToken = async (req, res) => {};
+
+  static refresh = async (req, res) => {
+    const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
       throw ApiError.UnauthorizedError();
     }
@@ -215,8 +213,8 @@ class UserController {
         token: newRefreshToken,
       },
     });
-    return { accessToken, newRefreshToken, userFromDb };
-  }
+    return res.json({ accessToken, newRefreshToken, userFromDb });
+  };
 }
 
 export default UserController;

@@ -30,7 +30,9 @@ app.get("/", (req, res) => {
   res.json({ message: "SENIOR PROJECT BACKEND" });
 });
 
-app.get("/", authMiddleware, (req, res) => {});
+app.get("/protected", authMiddleware, (req, res) => {
+  res.json({ message: "HIII" });
+});
 
 try {
   app.listen(PORT, () => console.log("Listening on port %s", PORT));

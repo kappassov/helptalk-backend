@@ -48,7 +48,11 @@ class UserController {
         first_name = "Admin";
         last_name = "Admin";
       }
-
+      const refreshToken = db_result.token;
+      res.cookie("refreshToken", refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
       return res.status(201).json({
         result: true,
         role: role.name,
@@ -182,38 +186,138 @@ class UserController {
     }
   };
 
-  static loginByAccessToken = async (req, res) => {};
-
-  static refresh = async (req, res) => {
-    const refreshToken = req.cookies.refreshToken;
-    if (!refreshToken) {
+  static loginByAccessToken = async (req, res) => {
+    const accessToken = req.headers.authorization.split(" ")[1];
+    console.log("loginByAccessToken");
+    console.log(accessToken);
+    const userData = Token.validateAccessToken(accessToken);
+    console.log(userData);
+    if (!userData) {
       throw ApiError.UnauthorizedError();
     }
-    const userData = Token.validateRefreshToken(refreshToken);
-    const tokenFromDb = await prisma.user.findFirst({
-      where: {
-        token: refreshToken,
-      },
-    });
-    if (!userData || !tokenFromDb) {
-      throw ApiError.UnauthorizedError();
-    }
-    const userFromDb = await prisma.user.findFirst({
+    const db_result = await prisma.user.findUnique({
       where: {
         email: userData.email,
       },
     });
 
-    const { accessToken, refreshToken: newRefreshToken } = Token.generateToken({
-      email: userFromDb.email,
-    });
-    prisma.user.update({
-      where: { email: userData.email },
-      data: {
-        token: newRefreshToken,
+    if (db_result == null) {
+      return res.status(201).json({ result: false });
+    }
+
+    const role = await prisma.role.findUnique({
+      where: {
+        id: db_result.role_id,
       },
     });
-    return res.json({ accessToken, newRefreshToken, userFromDb });
+    let first_name, last_name;
+    if (role.name == "patient") {
+      const patient = await prisma.patient.findFirst({
+        where: {
+          email: userData.email,
+        },
+      });
+      first_name = patient.first_name;
+      last_name = patient.last_name;
+    } else if (role.name == "specialist") {
+      const specialist = await prisma.specialist.findFirst({
+        where: {
+          email: userData.email,
+        },
+      });
+      first_name = specialist.first_name;
+      last_name = specialist.last_name;
+    } else {
+      first_name = "Admin";
+      last_name = "Admin";
+    }
+
+    return res.status(201).json({
+      result: true,
+      role: role.name,
+      first_name: first_name,
+      last_name: last_name,
+      email: userData.email,
+      token: Token.generateToken({ email: userData.email }),
+    });
+  };
+
+  static refresh = async (req, res) => {
+    try {
+      const refreshToken = req.body.refreshToken;
+      console.log("refreshing");
+      console.log(refreshToken);
+      if (!refreshToken) {
+        return res.status(401).json({ message: "error" });
+      }
+      const userData = Token.validateRefreshToken(refreshToken);
+      console.log(userData);
+      if (!userData) {
+        return res.status(401).json({ message: "error" });
+      }
+      const userFromDb = await prisma.user.findFirst({
+        where: {
+          email: userData.email,
+        },
+      });
+      if (userFromDb == null) {
+        return res.status(201).json({ result: false });
+      }
+
+      const role = await prisma.role.findUnique({
+        where: {
+          id: userFromDb.role_id,
+        },
+      });
+      let first_name, last_name;
+      if (role.name == "patient") {
+        const patient = await prisma.patient.findFirst({
+          where: {
+            email: userData.email,
+          },
+        });
+        first_name = patient.first_name;
+        last_name = patient.last_name;
+      } else if (role.name == "specialist") {
+        const specialist = await prisma.specialist.findFirst({
+          where: {
+            email: userData.email,
+          },
+        });
+        first_name = specialist.first_name;
+        last_name = specialist.last_name;
+      } else {
+        first_name = "Admin";
+        last_name = "Admin";
+      }
+      const { accessToken, refreshToken: newRefreshToken } =
+        Token.generateToken({
+          email: userFromDb.email,
+        });
+      prisma.user.update({
+        where: { email: userData.email },
+        data: {
+          token: newRefreshToken,
+        },
+      });
+      console.log("everythings fine");
+      console.log(newRefreshToken);
+      res.cookie("refreshToken", newRefreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
+      return res.status(201).json({
+        accessToken,
+        newRefreshToken,
+        userFromDb,
+        role: role.name,
+        first_name: first_name,
+        last_name: last_name,
+        email: userData.email,
+      });
+    } catch (e) {
+      throw e;
+    }
   };
 }
 

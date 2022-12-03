@@ -1,20 +1,42 @@
-import { Router } from "express";
-import BookingController from "../controllers/booking.controller";
+export {};
+const express = require("express");
+const BookingController  = require("../controllers/booking.controller");
+const authMiddleware = require("../middlewares/auth-middleware");
 
-const bookingRouter = Router();
+const bookingRouter = express.Router();
 
-bookingRouter.post("/book", BookingController.create_booking);
+bookingRouter.post("/book", authMiddleware, BookingController.create_booking);
 
-bookingRouter.get("/book/getall", BookingController.get_all);
+bookingRouter.get("/book/getall", authMiddleware, BookingController.get_all);
 
-bookingRouter.get("/book/getbypatientid", BookingController.get_by_patient_id);
+bookingRouter.get(
+  "/book/getbypatientid",
+  authMiddleware,
+  BookingController.get_by_patient_id
+);
 
-bookingRouter.get("/book/getbyspecialistid", BookingController.get_by_specialist_id);
+bookingRouter.get(
+  "/book/getbyspecialistid",
+  authMiddleware,
+  BookingController.get_by_specialist_id
+);
 
-bookingRouter.post("/book/update", BookingController.update_booking);
+bookingRouter.post(
+  "/book/update",
+  authMiddleware,
+  BookingController.update_booking
+);
 
-bookingRouter.delete("/book/delete", BookingController.delete_booking);
+bookingRouter.delete(
+  "/book/delete",
+  authMiddleware,
+  BookingController.delete_booking
+);
 
-bookingRouter.post("/book/approve", BookingController.approve_booking);
+bookingRouter.post(
+  "/book/approve",
+  authMiddleware,
+  BookingController.approve_booking
+);
 
-export default bookingRouter;
+module.exports = bookingRouter;

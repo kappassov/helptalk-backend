@@ -1,17 +1,16 @@
-import { Request, Response, NextFunction } from "express";
-import axios, { AxiosResponse } from "axios";
-import * as dotenv from "dotenv";
+const axios = require("axios");
+const dotenv = require("dotenv");
 
 dotenv.config();
 axios.defaults.headers.common[
   "Authorization"
 ] = `Bearer ${process.env.OPENAI_API}`;
 
-const sendPrompt = async (req: Request, res: Response) => {
+const sendPrompt = async (req, res) => {
   let prompt: string = req.body.prompt;
 
   try {
-    const { data } = await axios.post<any>(
+    const { data } = await axios.post(
       "https://api.openai.com/v1/completions",
       {
         model: "text-davinci-002",
@@ -46,4 +45,5 @@ const sendPrompt = async (req: Request, res: Response) => {
     }
   }
 };
-export default { sendPrompt };
+
+module.exports = {sendPrompt};

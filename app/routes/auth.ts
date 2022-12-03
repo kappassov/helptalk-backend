@@ -1,7 +1,8 @@
-import { Router, Request, Response } from "express";
-import UserController from "../controllers/user.controller";
+export {};
+const express = require("express");
+const UserController  = require("../controllers/user.controller");
 
-const authRouter = Router();
+const authRouter = express.Router();
 
 authRouter.post("/login", UserController.login);
 
@@ -9,4 +10,6 @@ authRouter.post("/register/patient", UserController.register_patient);
 
 authRouter.post("/register/specialist", UserController.register_specialist);
 
-export default authRouter;
+authRouter.get("/refresh", UserController.refresh);
+
+module.exports = authRouter;

@@ -64,9 +64,7 @@ class UserController {
   static register_patient = async (req, res) => {
     try {
       const { email, password, first_name, last_name } = req.body;
-      const temp = await prisma.role.findMany();
       const role = await prisma.role.findUnique({ where: { name: "patient" } });
-      return res.json(temp);
       const { accessToken, refreshToken } = Token.generateToken({
         email,
       });

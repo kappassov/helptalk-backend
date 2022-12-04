@@ -2,6 +2,7 @@ const openaiRouter = require("./app/routes/openai");
 const authRouter = require("./app/routes/auth");
 const bookingRouter = require("./app/routes/booking");
 const adminRouter = require("./app/routes/admin");
+const specializationRouter = require("./app/routes/specialization");
 const cookieParser = require("cookie-parser");
 const errorMiddleware = require("./app/middlewares/error-middleware");
 const authMiddleware = require("./app/middlewares/auth-middleware");
@@ -26,6 +27,7 @@ app.use("/", openaiRouter);
 app.use("/", authRouter);
 app.use("/", bookingRouter);
 app.use("/", adminRouter);
+app.use("/", specializationRouter);
 
 app.use(errorMiddleware);
 const PORT = process.env.PORT || 8080;

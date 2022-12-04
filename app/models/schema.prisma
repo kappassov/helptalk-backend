@@ -65,6 +65,7 @@ model Keyword {
   id                  Int                @id @default(autoincrement())
   specialization      Specialization     @relation(fields: [specialization_id], references: [id], onDelete: Cascade)
   specialization_id   Int
+  keyword             String
 }
 
 model Rating {

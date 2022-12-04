@@ -1,4 +1,22 @@
 -- CreateTable
+CREATE TABLE "Role" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "Role_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "User" (
+    "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "role_id" INTEGER NOT NULL,
+    "token" TEXT NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("email")
+);
+
+-- CreateTable
 CREATE TABLE "Patient" (
     "id" SERIAL NOT NULL,
     "first_name" TEXT NOT NULL,
@@ -40,6 +58,36 @@ CREATE TABLE "Specialist" (
 );
 
 -- CreateTable
+CREATE TABLE "Keyword" (
+    "id" SERIAL NOT NULL,
+    "specialization_id" INTEGER NOT NULL,
+
+    CONSTRAINT "Keyword_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Rating" (
+    "id" SERIAL NOT NULL,
+    "appointment_id" INTEGER NOT NULL,
+    "reviews" TEXT NOT NULL,
+    "count_rated" INTEGER NOT NULL,
+    "rating" DOUBLE PRECISION NOT NULL,
+
+    CONSTRAINT "Rating_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Payment" (
+    "id" SERIAL NOT NULL,
+    "appointment_id" INTEGER NOT NULL,
+    "amount" INTEGER NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL,
+    "bill_number" INTEGER NOT NULL,
+
+    CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Room" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
@@ -62,7 +110,16 @@ CREATE TABLE "Appointment" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Role_name_key" ON "Role"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Specialization_name_key" ON "Specialization"("name");
+
+-- AddForeignKey
+ALTER TABLE "User" ADD CONSTRAINT "User_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "Role"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Patient" ADD CONSTRAINT "Patient_email_fkey" FOREIGN KEY ("email") REFERENCES "User"("email") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -75,6 +132,15 @@ ALTER TABLE "Specialist" ADD CONSTRAINT "Specialist_specialization_id_fkey" FORE
 
 -- AddForeignKey
 ALTER TABLE "Specialist" ADD CONSTRAINT "Specialist_email_fkey" FOREIGN KEY ("email") REFERENCES "User"("email") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Keyword" ADD CONSTRAINT "Keyword_specialization_id_fkey" FOREIGN KEY ("specialization_id") REFERENCES "Specialization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Rating" ADD CONSTRAINT "Rating_appointment_id_fkey" FOREIGN KEY ("appointment_id") REFERENCES "Appointment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Payment" ADD CONSTRAINT "Payment_appointment_id_fkey" FOREIGN KEY ("appointment_id") REFERENCES "Appointment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Appointment" ADD CONSTRAINT "Appointment_patient_id_fkey" FOREIGN KEY ("patient_id") REFERENCES "Patient"("id") ON DELETE CASCADE ON UPDATE CASCADE;

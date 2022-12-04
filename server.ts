@@ -1,30 +1,47 @@
-
-import openaiRoute from "./app/routes/openai.route";
-import { PrismaClient } from '@prisma/client'
-import authRouter from "./app/routes/auth";
+const openaiRouter = require("./app/routes/openai");
+const authRouter = require("./app/routes/auth");
+const bookingRouter = require("./app/routes/booking");
+const adminRouter = require("./app/routes/admin");
+const specializationRouter = require("./app/routes/specialization");
+const cookieParser = require("cookie-parser");
+const errorMiddleware = require("./app/middlewares/error-middleware");
+const authMiddleware = require("./app/middlewares/auth-middleware");
+const {PrismaClient} =  require("@prisma/client");
 const express = require("express");
 const cors = require("cors");
 const app = express();
-import bookingRouter from "./app/routes/booking"
-
 
 const prisma = new PrismaClient();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 app.use(express.json());
-
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
-
-app.use("/", openaiRoute);
+app.use("/", openaiRouter);
 app.use("/", authRouter);
-app.use("/", bookingRouter)
+app.use("/", bookingRouter);
+app.use("/", adminRouter);
+app.use("/", specializationRouter);
 
+app.use(errorMiddleware);
 const PORT = process.env.PORT || 8080;
 
 app.get("/", (req, res) => {
   res.json({ message: "SENIOR PROJECT BACKEND" });
 });
 
-app.listen(PORT, () => console.log("Listening on port %s", PORT));
+app.get("/protected", authMiddleware, (req, res) => {
+  res.json({ message: "HIII" });
+});
+
+try {
+  app.listen(PORT, () => console.log("Listening on port %s", PORT));
+} catch (e) {
+  console.log(e);
+}

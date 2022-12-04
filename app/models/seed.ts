@@ -1,5 +1,3 @@
-import prisma from "./prisma-client";
-
 type Role = {
   name: string;
 };

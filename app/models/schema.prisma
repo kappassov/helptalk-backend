@@ -19,6 +19,7 @@ model User {
   role        Role      @relation(fields: [role_id], references: [id], onDelete: Cascade)
   role_id     Int 
   token       String
+  phone       String
   patients    Patient[]
   specialists Specialist[]
 }

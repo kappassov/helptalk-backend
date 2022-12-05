@@ -103,7 +103,7 @@ class UserController {
         },
       });
 
-      const patient = await prisma.patient.findUnique({
+      const patient = await prisma.patient.findFirst({
         where: {
           email: email
         }
@@ -200,7 +200,7 @@ class UserController {
         },
       });
 
-      const specialist = await prisma.specialist.findUnique({
+      const specialist = await prisma.specialist.findFirst({
         where: {
           email: email
         }

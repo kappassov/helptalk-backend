@@ -6,6 +6,8 @@ const authRouter = express.Router();
 
 authRouter.post("/login", UserController.login);
 
+authRouter.post("/loginGoogle", UserController.loginByGoogle);
+
 authRouter.post("/register/patient", UserController.register_patient);
 
 authRouter.post("/register/specialist", UserController.register_specialist);

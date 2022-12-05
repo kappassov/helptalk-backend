@@ -73,6 +73,66 @@ class UserController {
     }
   };
 
+  static loginByGoogle = async (req, res) => {
+    try {
+      const { email } = req.body;
+
+      const db_result = await prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+      if (db_result == null) {
+        return res.status(201).json({ result: false });
+      }
+
+      const role = await prisma.role.findUnique({
+        where: {
+          id: db_result.role_id,
+        },
+      });
+      let first_name, last_name, id;
+      if (role.name == "patient") {
+        const patient = await prisma.patient.findFirst({
+          where: {
+            email: email,
+          },
+        });
+        id = patient.id;
+        first_name = patient.first_name;
+        last_name = patient.last_name;
+      } else if (role.name == "specialist") {
+        const specialist = await prisma.specialist.findFirst({
+          where: {
+            email: email,
+          },
+        });
+        id = specialist.id;
+        first_name = specialist.first_name;
+        last_name = specialist.last_name;
+      } else {
+        first_name = "Admin";
+        last_name = "Admin";
+      }
+      const refreshToken = db_result.token;
+      res.cookie("refreshToken", refreshToken, {
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
+      
+      return res.status(201).json({
+        result: true,
+        id: id,
+        role: role.name,
+        first_name: first_name,
+        last_name: last_name,
+        token: Token.generateToken({ email }),
+      });
+    } catch (error: any) {
+      return res.status(500).json(error.message);
+    }
+  };
+
   static register_patient = async (req, res) => {
     try {
       console.log("is this even working");

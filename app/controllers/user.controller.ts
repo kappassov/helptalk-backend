@@ -1,3 +1,5 @@
+import { stringify } from "querystring";
+
 export {};
 const ApiError = require("../services/error");
 
@@ -117,8 +119,8 @@ class UserController {
         password,
         first_name,
         last_name,
-        specialization_name,
         phone,
+        specializations,
         socialmedia_id, 
         socialmedia_account,
         description,
@@ -137,22 +139,13 @@ class UserController {
         last_name == null ||
         phone == null ||
         description == null ||
-        specialization_name == null ||
+        specializations == null ||
         price == null
       ) {
         return res
           .status(500)
           .json({ result: false, message: "Some parameters are missing!" });
-      }
-      const specialization = await prisma.specialization.findUnique({
-        where: { name: specialization_name },
-      });
-
-      if (specialization == null) {
-        return res
-          .status(404)
-          .json({ result: false, message: "Specialization is not found!" });
-      }
+      }  
       const { accessToken, refreshToken } = Token.generateToken({
         email,
       });
@@ -173,9 +166,12 @@ class UserController {
                 description: description,
                 confirmed: false,
                 specialization: {
-                  connect: {
-                    id: specialization.id,
-                  },
+                  connect: 
+                    specializations.map((specialization) => {
+                      return {
+                        id: specialization
+                      }
+                    })
                 },
                 documents: {
                   create: [

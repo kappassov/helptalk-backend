@@ -61,8 +61,7 @@ model Specialist {
   id                  Int                @id @default(autoincrement())
   first_name          String    
   last_name           String    
-  specialization      Specialization     @relation(fields: [specialization_id], references: [id])
-  specialization_id   Int
+  specializations     Specialization[]   
   user                User               @relation(fields: [email], references: [email], onDelete: Cascade)
   email               String    
   description         String

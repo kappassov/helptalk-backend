@@ -1,3 +1,4 @@
+import { userInfo } from "os";
 import { stringify } from "querystring";
 
 export {};
@@ -30,13 +31,14 @@ class UserController {
           id: db_result.role_id,
         },
       });
-      let first_name, last_name;
+      let first_name, last_name, id;
       if (role.name == "patient") {
         const patient = await prisma.patient.findFirst({
           where: {
             email: email,
           },
         });
+        id = patient.id;
         first_name = patient.first_name;
         last_name = patient.last_name;
       } else if (role.name == "specialist") {
@@ -45,6 +47,7 @@ class UserController {
             email: email,
           },
         });
+        id = specialist.id;
         first_name = specialist.first_name;
         last_name = specialist.last_name;
       } else {
@@ -56,8 +59,10 @@ class UserController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
+      
       return res.status(201).json({
         result: true,
+        id: id,
         role: role.name,
         first_name: first_name,
         last_name: last_name,
@@ -97,12 +102,20 @@ class UserController {
           token: refreshToken,
         },
       });
+
+      const patient = await prisma.patient.findUnique({
+        where: {
+          email: email
+        }
+      });
+      
       res.cookie("refreshToken", refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
       return res.status(201).json({
         result: true,
+        id: patient.id,
         first_name: first_name,
         last_name: last_name,
         token: { accessToken, refreshToken },
@@ -187,8 +200,15 @@ class UserController {
         },
       });
 
+      const specialist = await prisma.specialist.findUnique({
+        where: {
+          email: email
+        }
+      });
+
       return res.status(201).json({
         result: true,
+        id: specialist.id,
         first_name: first_name,
         last_name: last_name,
         token: { accessToken, refreshToken },

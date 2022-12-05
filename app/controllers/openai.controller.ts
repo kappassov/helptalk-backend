@@ -1,6 +1,8 @@
+import { read } from "fs";
+
 const axios = require("axios");
 const dotenv = require("dotenv");
-
+const specs = require("../services/keywords");
 dotenv.config();
 axios.defaults.headers.common[
   "Authorization"
@@ -13,11 +15,12 @@ const sendPrompt = async (req, res) => {
     const { data } = await axios.post(
       "https://api.openai.com/v1/completions",
       {
-        model: "text-davinci-002",
-        prompt: "Give me keywords of " + prompt,
-        temperature: 0.1,
+        model: "text-davinci-003",
+        prompt: `Give me keywords of \"${prompt}\" issues`,
+        temperature: 0.7,
         max_tokens: 256,
         top_p: 1,
+        best_of: 3,
         frequency_penalty: 0,
         presence_penalty: 0,
       },
@@ -30,10 +33,8 @@ const sendPrompt = async (req, res) => {
       }
     );
 
-    //console.log(JSON.stringify(data, null, 4));
-
     return res.status(200).json({
-      message: data.choices[0].text,
+      Specializations: await linkKeywords(data.choices[0].text),
     });
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -46,4 +47,37 @@ const sendPrompt = async (req, res) => {
   }
 };
 
-module.exports = {sendPrompt};
+const linkKeywords = async (data: string) => {
+  const keywords = data
+    .split("\n")
+    .filter((str) => str !== "")
+    .map((str) => {
+      return str
+        .replace(/[0-9.)]/g, "")
+        .replace("-", "")
+        .trim()
+        .toLowerCase();
+    });
+
+  const readySpecs = {};
+  console.log(keywords);
+
+  for (let spec in specs) {
+    for (let keyword of keywords) {
+      if (specs[spec].includes(keyword)) {
+        if (!readySpecs[spec]) {
+          readySpecs[spec] = 0;
+        }
+        //console.log("inc");
+
+        readySpecs[spec] += 1;
+      }
+    }
+  }
+  //{Family: 3}
+  console.log(readySpecs);
+
+  return readySpecs;
+};
+
+module.exports = { sendPrompt };

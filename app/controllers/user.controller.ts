@@ -69,7 +69,7 @@ class UserController {
   static register_patient = async (req, res) => {
     try {
       console.log("is this even working");
-      const { email, password, first_name, last_name, phone } = req.body;
+      const { email, password, first_name, last_name, phone, socialmedia_id, socialmedia_account } = req.body;
       
       const role = await prisma.role.findUnique({ where: { name: "patient" } });
 
@@ -81,6 +81,8 @@ class UserController {
           email: email,
           password: bcrypt.hashSync(password, 8),
           role_id: role.id,
+          socialmedia_id: socialmedia_id,
+          socialmedia_account: socialmedia_account,
           phone: phone,
           patients: {
             create: [
@@ -117,6 +119,9 @@ class UserController {
         last_name,
         specialization_name,
         phone,
+        socialmedia_id, 
+        socialmedia_account,
+        description,
         price,
         path,
       } = req.body;
@@ -131,6 +136,7 @@ class UserController {
         first_name == null ||
         last_name == null ||
         phone == null ||
+        description == null ||
         specialization_name == null ||
         price == null
       ) {
@@ -155,6 +161,8 @@ class UserController {
           email: email,
           password: bcrypt.hashSync(password, 8),
           phone: phone,
+          socialmedia_id: socialmedia_id, 
+          socialmedia_account: socialmedia_account,
           role_id: role.id,
           specialists: {
             create: [
@@ -162,6 +170,7 @@ class UserController {
                 first_name: first_name,
                 last_name: last_name,
                 price: Number(price),
+                description: description,
                 confirmed: false,
                 specialization: {
                   connect: {

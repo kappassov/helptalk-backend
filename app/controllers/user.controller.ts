@@ -165,7 +165,7 @@ class UserController {
                 price: Number(price),
                 description: description,
                 confirmed: false,
-                specialization: {
+                specializations: {
                   connect: 
                     specializations.map((specialization) => {
                       return {

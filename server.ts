@@ -8,18 +8,14 @@ const socialmediaRouter = require("./app/routes/socialmedia");
 const cookieParser = require("cookie-parser");
 const errorMiddleware = require("./app/middlewares/error-middleware");
 const authMiddleware = require("./app/middlewares/auth-middleware");
-const {PrismaClient} =  require("@prisma/client");
+const { PrismaClient } = require("@prisma/client");
 const express = require("express");
 const cors = require("cors");
 const app = express();
 
 const prisma = new PrismaClient();
 
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+app.use(cors());
 
 app.use(express.json());
 app.use(cookieParser());

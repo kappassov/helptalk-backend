@@ -3,6 +3,7 @@ const authRouter = require("./app/routes/auth");
 const bookingRouter = require("./app/routes/booking");
 const adminRouter = require("./app/routes/admin");
 const specializationRouter = require("./app/routes/specialization");
+const specialistRouter = require("./app/routes/specialist");
 const socialmediaRouter = require("./app/routes/socialmedia");
 const cookieParser = require("cookie-parser");
 const errorMiddleware = require("./app/middlewares/error-middleware");
@@ -30,6 +31,7 @@ app.use("/", bookingRouter);
 app.use("/", adminRouter);
 app.use("/", specializationRouter);
 app.use("/", socialmediaRouter);
+app.use("/", specialistRouter);
 
 app.use(errorMiddleware);
 const PORT = process.env.PORT || 8080;

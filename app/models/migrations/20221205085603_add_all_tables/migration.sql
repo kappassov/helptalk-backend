@@ -7,11 +7,22 @@ CREATE TABLE "Role" (
 );
 
 -- CreateTable
+CREATE TABLE "SocialMedia" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "SocialMedia_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "role_id" INTEGER NOT NULL,
+    "socialmedia_id" INTEGER NOT NULL,
+    "socialmedia_account" TEXT NOT NULL,
     "token" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("email")
 );
@@ -49,8 +60,8 @@ CREATE TABLE "Specialist" (
     "id" SERIAL NOT NULL,
     "first_name" TEXT NOT NULL,
     "last_name" TEXT NOT NULL,
-    "specialization_id" INTEGER NOT NULL,
     "email" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
     "price" DOUBLE PRECISION NOT NULL,
     "confirmed" BOOLEAN NOT NULL,
 
@@ -61,6 +72,7 @@ CREATE TABLE "Specialist" (
 CREATE TABLE "Keyword" (
     "id" SERIAL NOT NULL,
     "specialization_id" INTEGER NOT NULL,
+    "keyword" TEXT NOT NULL,
 
     CONSTRAINT "Keyword_pkey" PRIMARY KEY ("id")
 );
@@ -109,6 +121,12 @@ CREATE TABLE "Appointment" (
     CONSTRAINT "Appointment_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "_SpecialistToSpecialization" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Role_name_key" ON "Role"("name");
 
@@ -118,17 +136,23 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 -- CreateIndex
 CREATE UNIQUE INDEX "Specialization_name_key" ON "Specialization"("name");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "_SpecialistToSpecialization_AB_unique" ON "_SpecialistToSpecialization"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_SpecialistToSpecialization_B_index" ON "_SpecialistToSpecialization"("B");
+
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_role_id_fkey" FOREIGN KEY ("role_id") REFERENCES "Role"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "User" ADD CONSTRAINT "User_socialmedia_id_fkey" FOREIGN KEY ("socialmedia_id") REFERENCES "SocialMedia"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Patient" ADD CONSTRAINT "Patient_email_fkey" FOREIGN KEY ("email") REFERENCES "User"("email") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Document" ADD CONSTRAINT "Document_specialist_id_fkey" FOREIGN KEY ("specialist_id") REFERENCES "Specialist"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Specialist" ADD CONSTRAINT "Specialist_specialization_id_fkey" FOREIGN KEY ("specialization_id") REFERENCES "Specialization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Specialist" ADD CONSTRAINT "Specialist_email_fkey" FOREIGN KEY ("email") REFERENCES "User"("email") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -150,3 +174,9 @@ ALTER TABLE "Appointment" ADD CONSTRAINT "Appointment_specialist_id_fkey" FOREIG
 
 -- AddForeignKey
 ALTER TABLE "Appointment" ADD CONSTRAINT "Appointment_room_id_fkey" FOREIGN KEY ("room_id") REFERENCES "Room"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_SpecialistToSpecialization" ADD CONSTRAINT "_SpecialistToSpecialization_A_fkey" FOREIGN KEY ("A") REFERENCES "Specialist"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_SpecialistToSpecialization" ADD CONSTRAINT "_SpecialistToSpecialization_B_fkey" FOREIGN KEY ("B") REFERENCES "Specialization"("id") ON DELETE CASCADE ON UPDATE CASCADE;

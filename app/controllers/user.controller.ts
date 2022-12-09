@@ -19,18 +19,20 @@ class UserController {
           email: email,
         },
       });
+      console.log(db_result);
       if (
         db_result == null ||
         !bcrypt.compareSync(password, db_result.password)
       ) {
         return res.status(201).json({ result: false });
       }
-
+      console.log("cringe?");
       const role = await prisma.role.findUnique({
         where: {
           id: db_result.role_id,
         },
       });
+      console.log(role, "roles");
       let first_name, last_name, id;
       if (role.name == "patient") {
         const patient = await prisma.patient.findFirst({
@@ -59,7 +61,7 @@ class UserController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
-      
+      console.log("hey?");
       return res.status(201).json({
         result: true,
         id: id,
@@ -119,7 +121,7 @@ class UserController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
-      
+
       return res.status(201).json({
         result: true,
         id: id,
@@ -136,8 +138,16 @@ class UserController {
   static register_patient = async (req, res) => {
     try {
       console.log("is this even working");
-      const { email, password, first_name, last_name, phone, socialmedia_id, socialmedia_account } = req.body;
-      
+      const {
+        email,
+        password,
+        first_name,
+        last_name,
+        phone,
+        socialmedia_id,
+        socialmedia_account,
+      } = req.body;
+
       const role = await prisma.role.findUnique({ where: { name: "patient" } });
 
       const { accessToken, refreshToken } = Token.generateToken({
@@ -165,10 +175,10 @@ class UserController {
 
       const patient = await prisma.patient.findFirst({
         where: {
-          email: email
-        }
+          email: email,
+        },
       });
-      
+
       res.cookie("refreshToken", refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
@@ -194,7 +204,7 @@ class UserController {
         last_name,
         phone,
         specializations,
-        socialmedia_id, 
+        socialmedia_id,
         socialmedia_account,
         description,
         price,
@@ -218,7 +228,7 @@ class UserController {
         return res
           .status(500)
           .json({ result: false, message: "Some parameters are missing!" });
-      }  
+      }
       const { accessToken, refreshToken } = Token.generateToken({
         email,
       });
@@ -227,7 +237,7 @@ class UserController {
           email: email,
           password: bcrypt.hashSync(password, 8),
           phone: phone,
-          socialmedia_id: socialmedia_id, 
+          socialmedia_id: socialmedia_id,
           socialmedia_account: socialmedia_account,
           role_id: role.id,
           specialists: {
@@ -239,12 +249,11 @@ class UserController {
                 description: description,
                 confirmed: false,
                 specializations: {
-                  connect: 
-                    specializations.map((specialization) => {
-                      return {
-                        id: specialization
-                      }
-                    })
+                  connect: specializations.map((specialization) => {
+                    return {
+                      id: specialization,
+                    };
+                  }),
                 },
                 documents: {
                   create: [
@@ -262,8 +271,8 @@ class UserController {
 
       const specialist = await prisma.specialist.findFirst({
         where: {
-          email: email
-        }
+          email: email,
+        },
       });
 
       return res.status(201).json({
@@ -281,8 +290,6 @@ class UserController {
   static loginByAccessToken = async (req, res) => {
     try {
       const accessToken = req.headers.authorization.split(" ")[1];
-      console.log("loginByAccessToken");
-      console.log(accessToken);
       const userData = Token.validateAccessToken(accessToken);
       console.log(userData);
       if (!userData) {
@@ -303,13 +310,14 @@ class UserController {
           id: db_result.role_id,
         },
       });
-      let first_name, last_name;
+      let first_name, last_name, id;
       if (role.name == "patient") {
         const patient = await prisma.patient.findFirst({
           where: {
             email: userData.email,
           },
         });
+        id = patient.id;
         first_name = patient.first_name;
         last_name = patient.last_name;
       } else if (role.name == "specialist") {
@@ -318,6 +326,7 @@ class UserController {
             email: userData.email,
           },
         });
+        id = specialist.id;
         first_name = specialist.first_name;
         last_name = specialist.last_name;
       } else {
@@ -328,6 +337,7 @@ class UserController {
       return res.status(201).json({
         result: true,
         role: role.name,
+        id: id,
         first_name: first_name,
         last_name: last_name,
         email: userData.email,

@@ -58,7 +58,7 @@ const linkKeywords = async (data: string) => {
         .trim()
         .toLowerCase();
     });
-
+  console.log(keywords);
   const readySpecs = {};
 
   for (let spec in specs) {

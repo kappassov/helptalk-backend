@@ -29,7 +29,6 @@ class SpecialistController {
   static getById = async (req, res) => {
     try {
       const { specialist_id } = req.body;
-      console.log(specialist_id);
       const specialist = await prisma.specialist.findUnique({
         where: {
           id: specialist_id,
@@ -49,7 +48,6 @@ class SpecialistController {
           specializations: true,
         },
       });
-      console.log("help");
       res.status(201).json(specialist);
     } catch (error: any) {
       return res.status(500).json(error.message);

@@ -14,7 +14,6 @@ class BookingController {
   static get_by_patient_id = async (req, res) => {
     try {
       const { id } = req.body;
-      console.log(id);
       const post = await prisma.appointment.findMany({
         where: {
           patient_id: id,
@@ -43,7 +42,6 @@ class BookingController {
   static create_booking = async (req, res) => {
     try {
       const { patient_id, specialist_id, appointed_at, comments } = req.body;
-      console.log(patient_id, specialist_id, appointed_at, comments);
       const start_time = new Date(appointed_at);
       const end_time = new Date(appointed_at);
       end_time.setHours(end_time.getHours() + 1); // assume the meeting is 1 hour
@@ -123,13 +121,11 @@ class BookingController {
   static approve_booking = async (req, res) => {
     try {
       const { id } = req.body;
-      console.log(id);
       const appointment = await prisma.appointment.findUnique({
         where: {
           id: id,
         },
       });
-      console.log("asd");
       await check_conflicts(
         appointment.patient_id,
         appointment.specialist_id,
@@ -137,15 +133,12 @@ class BookingController {
         appointment.end_time,
         res
       );
-      console.log("asd");
-
       const post = await prisma.appointment.update({
         where: { id: id },
         data: {
           approved: true,
         },
       });
-      console.log(post, "fine");
       res.status(201).json(post);
     } catch (error: any) {
       return res.status(500).json(error.message);

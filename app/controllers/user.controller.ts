@@ -12,27 +12,22 @@ class UserController {
   static login = async (req, res) => {
     try {
       const { email, password } = req.body;
-      console.log("login");
-      console.log(email, password);
       const db_result = await prisma.user.findUnique({
         where: {
           email: email,
         },
       });
-      console.log(db_result);
       if (
         db_result == null ||
         !bcrypt.compareSync(password, db_result.password)
       ) {
         return res.status(201).json({ result: false });
       }
-      console.log("cringe?");
       const role = await prisma.role.findUnique({
         where: {
           id: db_result.role_id,
         },
       });
-      console.log(role, "roles");
       let first_name, last_name, id;
       if (role.name == "patient") {
         const patient = await prisma.patient.findFirst({
@@ -61,7 +56,6 @@ class UserController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
       });
-      console.log("hey?");
       return res.status(201).json({
         result: true,
         id: id,
@@ -137,7 +131,6 @@ class UserController {
 
   static register_patient = async (req, res) => {
     try {
-      console.log("is this even working");
       const {
         email,
         password,
@@ -291,7 +284,6 @@ class UserController {
     try {
       const accessToken = req.headers.authorization.split(" ")[1];
       const userData = Token.validateAccessToken(accessToken);
-      console.log(userData);
       if (!userData) {
         throw ApiError.UnauthorizedError();
       }
@@ -351,13 +343,10 @@ class UserController {
   static refresh = async (req, res) => {
     try {
       const refreshToken = req.body.refreshToken;
-      console.log("refreshing");
-      console.log(refreshToken);
       if (!refreshToken) {
         return res.status(401).json({ message: "error" });
       }
       const userData = Token.validateRefreshToken(refreshToken);
-      console.log(userData);
       if (!userData) {
         return res.status(401).json({ message: "error" });
       }
@@ -406,8 +395,6 @@ class UserController {
           token: newRefreshToken,
         },
       });
-      console.log("everythings fine");
-      console.log(newRefreshToken);
       res.cookie("refreshToken", newRefreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,

@@ -60,7 +60,6 @@ const linkKeywords = async (data: string) => {
     });
 
   const readySpecs = {};
-  console.log(keywords);
 
   for (let spec in specs) {
     for (let keyword of keywords) {
@@ -68,14 +67,12 @@ const linkKeywords = async (data: string) => {
         if (!readySpecs[spec]) {
           readySpecs[spec] = 0;
         }
-        //console.log("inc");
 
         readySpecs[spec] += 1;
       }
     }
   }
   //{Family: 3}
-  console.log(readySpecs);
 
   return readySpecs;
 };

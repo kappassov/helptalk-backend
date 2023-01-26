@@ -97,9 +97,11 @@ model Payment {
 }
 
 model Room {
-  id            Int       @id @default(autoincrement())
-  name          String  
-  appointments  Appointment[]
+  id            Int         @id @default(autoincrement())
+  name          String
+  link          String
+  appointment_id Int        @unique
+  appointment   Appointment @relation(fields: [appointment_id], references: [id])
 }
 
 model Appointment {
@@ -108,7 +110,7 @@ model Appointment {
   patient_id      Int
   specialist      Specialist  @relation(fields: [specialist_id], references: [id])
   specialist_id   Int
-  room            Room        @relation(fields: [room_id], references: [id])
+  room            Room?       
   room_id         Int
   appointed_at    DateTime
   end_time        DateTime

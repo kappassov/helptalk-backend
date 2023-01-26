@@ -1,5 +1,6 @@
 export {};
 const prisma = require("../models/prisma-client");
+import {v4 as uuidv4} from 'uuid';
 
 class BookingController {
   static get_all = async (req, res) => {
@@ -39,6 +40,20 @@ class BookingController {
     }
   };
 
+  static get_room_by_appointment_id = async (req, res) => {
+    try {
+      const { id } = req.body;
+      const post = await prisma.room.findUnique({
+        where: {
+          appointment_id: id
+        },
+      });
+      res.status(201).json(post);
+    } catch (error: any) {
+      return res.status(500).json(error.message);
+    }
+  };
+
   static create_booking = async (req, res) => {
     try {
       const { patient_id, specialist_id, appointed_at, comments } = req.body;
@@ -51,6 +66,7 @@ class BookingController {
       const room = await prisma.room.create({
         data: {
           name: "video-room",
+          link: uuidv4(),
         },
       });
       var find = await prisma.appointment.findMany({

@@ -1,5 +1,7 @@
 export {};
 const prisma = require("../models/prisma-client");
+import {v4 as uuidv4} from 'uuid';
+
 
 
 class BookingController {
@@ -49,11 +51,7 @@ class BookingController {
             if (start_time < new Date()) {
                 return res.status(400).json("The date is in the past.")
             }
-            const room = await prisma.room.create({
-                data: {
-                    name: "video-room"
-                },
-            });
+            
             var find = await prisma.appointment.findMany({
                 where: {
                   patient_id: patient_id,
@@ -72,7 +70,7 @@ class BookingController {
                     appointed_at,
                     end_time: end_time,
                     comments,
-                    room: { connect: { id: room.id } },
+                    room_id: uuidv4(),
                     approved: false
                 },
             });

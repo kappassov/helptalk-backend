@@ -77,57 +77,6 @@ class BookingController {
       }
   };
 
-  static create_booking = async (req, res) => {
-    try {
-      const { patient_id, specialist_id, appointed_at, comments } = req.body;
-      const start_time = new Date(appointed_at);
-      const end_time = new Date(appointed_at);
-      end_time.setHours(end_time.getHours() + 1); // assume the meeting is 1 hour
-      if (start_time < new Date()) {
-        return res.status(400).json("The date is in the past.");
-      }
-      const room = await prisma.room.create({
-        data: {
-          name: "video-room",
-          link: uuidv4(),
-        },
-      });
-      var find = await prisma.appointment.findMany({
-        where: {
-          patient_id: patient_id,
-          specialist_id: specialist_id,
-          approved: false,
-        },
-      });
-      if (find.length != 0) {
-        res
-          .status(400)
-          .json("You already have a pending appointment with this specialist.");
-      }
-      await check_conflicts(
-        patient_id,
-        specialist_id,
-        start_time,
-        end_time,
-        res
-      );
-      const post = await prisma.appointment.create({
-        data: {
-          patient: { connect: { id: patient_id } },
-          specialist: { connect: { id: specialist_id } },
-          appointed_at,
-          end_time: end_time,
-          comments,
-          room: { connect: { id: room.id } },
-          approved: false,
-        },
-      });
-      return res.status(201).json(post);
-    } catch (error: any) {
-      return res.status(500).json(error.message);
-    }
-  };
-
   static update_booking = async (req, res) => {
     try {
       const { id, appointed_at, comments, approved } = req.body;

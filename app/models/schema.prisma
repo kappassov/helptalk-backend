@@ -27,6 +27,7 @@ model User {
   socialmedia         SocialMedia      @relation(fields: [socialmedia_id], references: [id], onDelete: Cascade)
   socialmedia_id      Int 
   socialmedia_account String
+  avatar            String?
   token             String
   phone             String
   patients          Patient[]

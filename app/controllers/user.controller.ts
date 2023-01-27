@@ -412,6 +412,28 @@ class UserController {
       throw e;
     }
   };
+
+
+  static upload_avatar = async(req, res) => {
+    try {
+      const user_id = req.body.id;
+      const avatar = req.body.avatar;
+    
+      prisma.user.update({
+        where: { id: user_id },
+        data: {
+          avatar: avatar,
+        },
+      });
+      
+      return res.status(200).json({
+        result: true
+      });
+    } catch (e) {
+      throw e;
+    }
+  };
+
 }
 
 module.exports = UserController;

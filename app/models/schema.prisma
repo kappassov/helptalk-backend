@@ -96,22 +96,13 @@ model Payment {
   bill_number         Int             
 }
 
-model Room {
-  id            Int         @id @default(autoincrement())
-  name          String
-  link          String
-  appointment_id Int        @unique
-  appointment   Appointment @relation(fields: [appointment_id], references: [id])
-}
-
 model Appointment {
   id              Int         @id @default(autoincrement())
   patient         Patient     @relation(fields: [patient_id], references: [id], onDelete: Cascade)
   patient_id      Int
   specialist      Specialist  @relation(fields: [specialist_id], references: [id])
   specialist_id   Int
-  room            Room?       
-  room_id         Int
+  room_id         String
   appointed_at    DateTime
   end_time        DateTime
   comments        String

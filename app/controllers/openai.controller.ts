@@ -72,9 +72,16 @@ const linkKeywords = async (data: string) => {
       }
     }
   }
+  let sortedSpecs = {};
+  sortedSpecs = Object.keys(readySpecs).sort((a, b) => {
+    return readySpecs[a] - readySpecs[b] 
+  }).reduce((prev, curr, i) => {
+      prev[i] = readySpecs[curr]
+      return prev
+  }, {});
   //{Family: 3}
 
-  return readySpecs;
+  return sortedSpecs;
 };
 
 module.exports = { sendPrompt };

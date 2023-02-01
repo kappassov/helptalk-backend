@@ -244,7 +244,7 @@ class UserController {
                 specializations: {
                   connect: specializations.map((specialization) => {
                     return {
-                      id: specialization,
+                      name: specialization,
                     };
                   }),
                 },

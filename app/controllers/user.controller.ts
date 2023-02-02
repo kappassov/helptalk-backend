@@ -28,29 +28,8 @@ class UserController {
           id: db_result.role_id,
         },
       });
-      let first_name, last_name, id;
-      if (role.name == "patient") {
-        const patient = await prisma.patient.findFirst({
-          where: {
-            email: email,
-          },
-        });
-        id = patient.id;
-        first_name = patient.first_name;
-        last_name = patient.last_name;
-      } else if (role.name == "specialist") {
-        const specialist = await prisma.specialist.findFirst({
-          where: {
-            email: email,
-          },
-        });
-        id = specialist.id;
-        first_name = specialist.first_name;
-        last_name = specialist.last_name;
-      } else {
-        first_name = "Admin";
-        last_name = "Admin";
-      }
+      let info = await getName(email, role.name);
+      
       const refreshToken = db_result.token;
       res.cookie("refreshToken", refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -58,10 +37,10 @@ class UserController {
       });
       return res.status(201).json({
         result: true,
-        id: id,
+        id: info["id"],
         role: role.name,
-        first_name: first_name,
-        last_name: last_name,
+        first_name: info["first_name"],
+        last_name: info["last_name"],
         token: Token.generateToken({ email }),
       });
     } catch (error: any) {
@@ -434,6 +413,71 @@ class UserController {
     }
   };
 
+  static getByEmail = async(req, res) => {
+    try {
+      const { email } = req.body;
+      const user = await prisma.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+
+      if (user == null) {
+        return res.status(201).json({ result: false });
+      }
+
+      const role = await prisma.role.findUnique({
+        where: {
+          id: user.role_id,
+        },
+      });
+
+      let info = await getName(email, role.name);
+
+      return res.status(201).json({
+        result: true,
+        id: info["id"],
+        role: role.name,
+        first_name: info["first_name"],
+        last_name: info["last_name"],
+      });
+
+    } catch (error: any) {
+      return res.status(500).json(error.message);
+    }
+  }
+}
+
+async function getName (
+  email, 
+  role
+){
+  const res = {};
+  
+  if (role == "patient") {
+    const patient = await prisma.patient.findFirst({
+      where: {
+        email: email,
+      },
+    });
+    res["id"] = patient.id;
+    res["first_name"] = patient.first_name;
+    res["last_name"] = patient.last_name;
+  } else if (role.name == "specialist") {
+    const specialist = await prisma.specialist.findFirst({
+      where: {
+        email: email,
+      },
+    });
+    res["id"] = specialist.id;
+    res["first_name"] = specialist.first_name;
+    res["last_name"] = specialist.last_name;
+  } else {
+    res["first_name"] = "Admin";
+    res["last_name"] = "Admin";
+  }
+
+  return res; 
 }
 
 module.exports = UserController;

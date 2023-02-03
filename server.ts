@@ -53,13 +53,15 @@ const io = require("socket.io")(server, {
 });
 io.on("connection", (socket) => {
   socket.on("join-room", (roomId, userId) => {
-    console.log(roomId, userId);
     socket.join(roomId);
     socket.to(roomId)?.emit("user-connected", userId);
 
     socket.on("disconnect", () => {
       socket.to(roomId)?.emit("user-disconnected", userId);
     });
+  });
+  socket.once("send-chat-message", (room, message) => {
+    socket.to(room).emit("chat-message", { message: message });
   });
 });
 

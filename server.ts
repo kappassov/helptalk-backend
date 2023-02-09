@@ -60,7 +60,7 @@ io.on("connection", (socket) => {
       socket.to(roomId)?.emit("user-disconnected", userId);
     });
   });
-  socket.once("send-chat-message", (room, message) => {
+  socket.on("send-chat-message", (room, message) => {
     socket.to(room).emit("chat-message", { message: message });
   });
 });

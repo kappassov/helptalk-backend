@@ -5,8 +5,8 @@ import {v4 as uuidv4} from 'uuid';
 class BookingController {
   static get_all = async (req, res) => {
     try {
-      const post = await prisma.appointment.findMany();
-      res.status(201).json(post);
+      const appointments = await prisma.appointment.findMany();
+      return res.status(201).json(appointments);
     } catch (error: any) {
       return res.status(500).json(error.message);
     }
@@ -15,12 +15,12 @@ class BookingController {
   static get_by_patient_id = async (req, res) => {
     try {
       const { id } = req.body;
-      const post = await prisma.appointment.findMany({
+      const appointment = await prisma.appointment.findMany({
         where: {
           patient_id: id,
         },
       });
-      res.status(201).json(post);
+      return res.status(201).json(appointment);
     } catch (error: any) {
       return res.status(500).json(error.message);
     }
@@ -29,12 +29,12 @@ class BookingController {
   static get_by_specialist_id = async (req, res) => {
     try {
       const { id } = req.body;
-      const post = await prisma.appointment.findMany({
+      const appointment = await prisma.appointment.findMany({
         where: {
           specialist_id: id,
         },
       });
-      res.status(201).json(post);
+      return res.status(201).json(appointment);
     } catch (error: any) {
       return res.status(500).json(error.message);
     }
@@ -58,7 +58,7 @@ class BookingController {
               },
             })
           if(find.length != 0) {
-              res.status(400).json("You already have a pending appointment with this specialist.")
+              return res.status(400).json("You already have a pending appointment with this specialist.")
           }
           await check_conflicts(patient_id, specialist_id, start_time, end_time, res)
           await check_balance(patient_id, specialist_id, res)
@@ -99,10 +99,10 @@ class BookingController {
   static delete_booking = async (req, res) => {
     try {
       const { id } = req.body;
-      const post = await prisma.appointment.delete({
+      const appointment = await prisma.appointment.delete({
         where: { id: id },
       });
-      res.status(201).json(post);
+      return res.status(201).json(appointment);
     } catch (error: any) {
       return res.status(500).json(error.message);
     }
@@ -123,13 +123,44 @@ class BookingController {
         appointment.end_time,
         res
       );
+      
+      const patient = await prisma.patient.findUnique({
+        where: {
+          id: appointment.patient_id,
+        },
+      });
+
+      const specialist = await prisma.specialist.findUnique({
+        where: {
+          id: appointment.specialist_id,
+        },
+      });
+
+      const updateSpecialist = await prisma.user.update({
+        where: { email: specialist.email },
+        data: {
+          balance: {
+            increment: specialist.price * 0.9,
+          },
+        },
+      });  
+
+      const updatePatient = await prisma.user.update({
+        where: { email: patient.email },
+        data: {
+          balance: {
+            increment: specialist.price * (-1),
+          },
+        },
+      });  
+      
       const post = await prisma.appointment.update({
         where: { id: id },
         data: {
           approved: true,
         },
       });
-      res.status(201).json(post);
+      return res.status(201).json(post);
     } catch (error: any) {
       return res.status(500).json(error.message);
     }

@@ -22,6 +22,27 @@ class PatientController {
       return res.status(500).json(error.message);
     }
   };
+  static topUp = async (req, res) => {
+    try {
+      const { id, balance } = req.body;
+      const patient = await prisma.patient.findUnique({
+        where: { id: id },
+      });
+
+      const res = await prisma.user.update({
+        where: { email: patient.email },
+        data: {
+          balance: {
+            increment: balance,
+          },
+        },
+      });
+
+      res.status(201).json(res);
+    } catch (error: any) {
+      return res.status(500).json(error.message);
+    }
+  };
 }
 
 module.exports = PatientController;

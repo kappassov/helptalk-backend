@@ -133,6 +133,7 @@ class UserController {
           socialmedia_id: socialmedia_id,
           socialmedia_account: socialmedia_account,
           phone: phone,
+          balance: 0,
           patients: {
             create: [
               {

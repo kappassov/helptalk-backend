@@ -213,6 +213,7 @@ class UserController {
           socialmedia_id: socialmedia_id,
           socialmedia_account: socialmedia_account,
           role_id: role.id,
+          balance: 0,
           specialists: {
             create: [
               {

@@ -41,6 +41,7 @@ class UserController {
         role: role.name,
         first_name: info["first_name"],
         last_name: info["last_name"],
+        balance: db_result.balance,
         token: Token.generateToken({ email }),
       });
     } catch (error: any) {

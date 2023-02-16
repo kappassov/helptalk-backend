@@ -39,6 +39,7 @@ class BookingController {
       return res.status(500).json(error.message);
     }
   };
+
   static create_booking = async (req, res) => {
       try {
           const { patient_id, specialist_id, appointed_at, comments } = req.body
@@ -60,6 +61,7 @@ class BookingController {
               res.status(400).json("You already have a pending appointment with this specialist.")
           }
           await check_conflicts(patient_id, specialist_id, start_time, end_time, res)
+          await check_balance(patient_id, specialist_id, res)
           const post = await prisma.appointment.create({
               data: {
                   patient: { connect: { id: patient_id } },
@@ -168,5 +170,33 @@ async function check_conflicts(
       (end_time >= f.appointed_at && end_time <= f.end_time)
     )
       res.status(400).json("Conflicting appointment.");
+  }
+}
+
+
+async function check_balance(
+  patient_id,
+  specialist_id,
+  res
+) {
+  var patient = await prisma.patient.findUnique({
+    where: {
+      id: patient_id,
+    },
+  });
+  var user = await prisma.user.findUnique({
+    where:{
+      email: patient.email
+    }
+  });
+
+  var specialist = await prisma.specialist.findUnique({
+    where: {
+      id: specialist_id,
+    },
+  });
+
+  if(user.balance <= specialist.price){
+    res.status(400).json("Insufficient balance, please top up!");
   }
 }

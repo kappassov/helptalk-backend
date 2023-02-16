@@ -315,6 +315,7 @@ class UserController {
         first_name: first_name,
         last_name: last_name,
         email: userData.email,
+        balance: db_result.balance,
         token: Token.generateToken({ email: userData.email }),
       });
     } catch (e) {

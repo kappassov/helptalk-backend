@@ -25,13 +25,10 @@ class PatientController {
 
   static topUp = async (req, res) => {
     try {
-      const { id, balance } = req.body;
-      const patient = await prisma.patient.findUnique({
-        where: { id: id },
-      });
+      const { email, balance } = req.body;
 
       const updated = await prisma.user.update({
-        where: { email: patient.email },
+        where: { email: email },
         data: {
           balance: {
             increment: balance,
@@ -44,6 +41,25 @@ class PatientController {
       return res.status(500).json(error.message);
     }
   };
+
+  static updateProfile = async (req, res) => {
+    try {
+      const { email, socialmedia_account, phone } = req.body;
+
+      const updated = await prisma.user.update({
+        where: { email: email },
+        data: {
+          socialmedia_account: socialmedia_account,
+          phone: phone,
+        },
+      });
+
+      return res.status(200).json(updated);
+    } catch (error: any) {
+      return res.status(500).json(error.message);
+    }
+  };
+
 }
 
 module.exports = PatientController;

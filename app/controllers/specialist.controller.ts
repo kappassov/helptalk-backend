@@ -56,13 +56,10 @@ class SpecialistController {
 
   static withdraw = async(req, res) => {
     try {
-      const { id, balance } = req.body;
-      const specialist = await prisma.specialist.findUnique({
-        where: { id: id },
-      });
+      const { email, balance } = req.body;
 
       const updated = await prisma.user.update({
-        where: { email: specialist.email },
+        where: { email: email },
         data: {
           balance: {
             increment: balance * (-1),
@@ -75,6 +72,35 @@ class SpecialistController {
       return res.status(500).json(error.message);
     }
   }
+
+  static updateProfile = async (req, res) => {
+    try {
+      const { email, socialmedia_account, phone, price } = req.body;
+
+      const specialist = await prisma.specialist.findFirst({
+        where: {email: email}
+      })
+
+      const updatedSpec = await prisma.specialist.update({
+        where: { id: specialist.id },
+        data: {
+          price: Number(price),
+        },
+      });
+
+      const updated = await prisma.user.update({
+        where: { email: email },
+        data: {
+          socialmedia_account: socialmedia_account,
+          phone: phone,
+        },
+      });
+
+      return res.status(200).json(updated);
+    } catch (error: any) {
+      return res.status(500).json(error.message);
+    }
+  };
 }
 
 module.exports = SpecialistController;

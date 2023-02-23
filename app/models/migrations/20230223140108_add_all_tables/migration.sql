@@ -58,6 +58,25 @@ CREATE TABLE "Document" (
 );
 
 -- CreateTable
+CREATE TABLE "Rating" (
+    "id" SERIAL NOT NULL,
+    "specialist_id" INTEGER NOT NULL,
+    "count_rated" INTEGER NOT NULL,
+    "rating" DOUBLE PRECISION NOT NULL,
+
+    CONSTRAINT "Rating_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Review" (
+    "id" SERIAL NOT NULL,
+    "appointment_id" INTEGER NOT NULL,
+    "review" TEXT NOT NULL,
+
+    CONSTRAINT "Review_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Specialist" (
     "id" SERIAL NOT NULL,
     "first_name" TEXT NOT NULL,
@@ -77,17 +96,6 @@ CREATE TABLE "Keyword" (
     "keyword" TEXT NOT NULL,
 
     CONSTRAINT "Keyword_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Rating" (
-    "id" SERIAL NOT NULL,
-    "appointment_id" INTEGER NOT NULL,
-    "reviews" TEXT NOT NULL,
-    "count_rated" INTEGER NOT NULL,
-    "rating" DOUBLE PRECISION NOT NULL,
-
-    CONSTRAINT "Rating_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -111,7 +119,6 @@ CREATE TABLE "Appointment" (
     "end_time" TIMESTAMP(3) NOT NULL,
     "comments" TEXT NOT NULL,
     "approved" BOOLEAN NOT NULL,
-    "reviews" TEXT,
 
     CONSTRAINT "Appointment_pkey" PRIMARY KEY ("id")
 );
@@ -150,13 +157,16 @@ ALTER TABLE "Patient" ADD CONSTRAINT "Patient_email_fkey" FOREIGN KEY ("email") 
 ALTER TABLE "Document" ADD CONSTRAINT "Document_specialist_id_fkey" FOREIGN KEY ("specialist_id") REFERENCES "Specialist"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Rating" ADD CONSTRAINT "Rating_specialist_id_fkey" FOREIGN KEY ("specialist_id") REFERENCES "Specialist"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Review" ADD CONSTRAINT "Review_appointment_id_fkey" FOREIGN KEY ("appointment_id") REFERENCES "Appointment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Specialist" ADD CONSTRAINT "Specialist_email_fkey" FOREIGN KEY ("email") REFERENCES "User"("email") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Keyword" ADD CONSTRAINT "Keyword_specialization_id_fkey" FOREIGN KEY ("specialization_id") REFERENCES "Specialization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Rating" ADD CONSTRAINT "Rating_appointment_id_fkey" FOREIGN KEY ("appointment_id") REFERENCES "Appointment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Payment" ADD CONSTRAINT "Payment_appointment_id_fkey" FOREIGN KEY ("appointment_id") REFERENCES "Appointment"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

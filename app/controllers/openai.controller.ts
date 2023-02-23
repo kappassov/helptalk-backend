@@ -102,7 +102,7 @@ const matchSpecs = async (sortedSpecs, counter) => {
     }
 
     specialists.sort((a, b) => b.rank - a.rank);
-
+    console.log(sortedSpecs);
     return {
       Specializations: sortedSpecs,
       Specialists: specialists,

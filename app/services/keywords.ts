@@ -282,17 +282,5 @@ const specs = {
     "cyberbullying",
     "childhood trauma",
   ],
-  Test: [
-    "communication",
-    "trust",
-    "conflict",
-    "intimacy",
-    "respect",
-    "boundaries",
-    "compromise",
-    "jealousy",
-    "commitment",
-    "forgiveness",
-  ],
 };
 module.exports = specs;

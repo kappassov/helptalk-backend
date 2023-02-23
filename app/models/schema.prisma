@@ -60,6 +60,21 @@ model Document {
   path            String 
 }
 
+model Rating {
+  id                  Int                @id @default(autoincrement())
+  specialist          Specialist         @relation(fields: [specialist_id], references: [id])
+  specialist_id       Int
+  count_rated         Int
+  rating              Float
+}
+
+model Review {
+  id                  Int                @id @default(autoincrement())
+  appointment         Appointment        @relation(fields: [appointment_id], references: [id])
+  appointment_id      Int                
+  review              String            
+}
+
 model Specialist {
   id                  Int                @id @default(autoincrement())
   first_name          String    
@@ -70,6 +85,7 @@ model Specialist {
   description         String
   price               Float  
   confirmed           Boolean
+  ratings         Rating[]
   appointments        Appointment[]
   documents           Document[]
 }
@@ -79,15 +95,6 @@ model Keyword {
   specialization      Specialization     @relation(fields: [specialization_id], references: [id], onDelete: Cascade)
   specialization_id   Int
   keyword             String
-}
-
-model Rating {
-  id                  Int                @id @default(autoincrement())
-  appointment         Appointment        @relation(fields: [appointment_id], references: [id])
-  appointment_id      Int
-  reviews             String
-  count_rated         Int
-  rating              Float
 }
 
 model Payment {
@@ -110,6 +117,6 @@ model Appointment {
   end_time        DateTime
   comments        String
   approved        Boolean
-  ratings         Rating[]
+  reviews         Review[]
   payments        Payment[]
 }

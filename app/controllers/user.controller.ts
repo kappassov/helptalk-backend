@@ -399,11 +399,11 @@ class UserController {
 
   static upload_avatar = async(req, res) => {
     try {
-      const user_id = req.body.id;
+      const user_email = req.body.email;
       const avatar = req.body.avatar;
     
       prisma.user.update({
-        where: { id: user_id },
+        where: { email: user_email },
         data: {
           avatar: avatar,
         },
@@ -412,8 +412,8 @@ class UserController {
       return res.status(200).json({
         result: true
       });
-    } catch (e) {
-      throw e;
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
     }
   };
 

@@ -133,6 +133,7 @@ class UserController {
           role_id: role.id,
           socialmedia_id: socialmedia_id,
           socialmedia_account: socialmedia_account,
+          avatar: null,
           phone: phone,
           balance: 0,
           patients: {
@@ -213,6 +214,7 @@ class UserController {
           phone: phone,
           socialmedia_id: socialmedia_id,
           socialmedia_account: socialmedia_account,
+          avatar: null,
           role_id: role.id,
           balance: 0,
           specialists: {

@@ -1,8 +1,8 @@
 import { read } from "fs";
-
 const axios = require("axios");
 const dotenv = require("dotenv");
 const specs = require("../services/keywords");
+const prisma = require("../models/prisma-client");
 dotenv.config();
 axios.defaults.headers.common[
   "Authorization"
@@ -16,6 +16,7 @@ const sendPrompt = async (req, res) => {
       "https://api.openai.com/v1/completions",
       {
         model: "text-davinci-003",
+        //model: "text-chat-davinci-002-20221122",
         prompt: `Give me keywords of \"${prompt}\" issues`,
         temperature: 0.7,
         max_tokens: 256,
@@ -58,9 +59,9 @@ const linkKeywords = async (data: string) => {
         .trim()
         .toLowerCase();
     });
-  console.log(keywords);
-  const readySpecs = {};
 
+  const readySpecs = {};
+  let counter = 0;
   for (let spec in specs) {
     for (let keyword of keywords) {
       if (specs[spec].includes(keyword)) {
@@ -69,19 +70,46 @@ const linkKeywords = async (data: string) => {
         }
 
         readySpecs[spec] += 1;
+        counter++;
       }
     }
   }
-  let sortedSpecs = {};
-  sortedSpecs = Object.keys(readySpecs).sort((a, b) => {
-    return readySpecs[a] - readySpecs[b] 
-  }).reduce((prev, curr, i) => {
-      prev[i] = readySpecs[curr]
-      return prev
-  }, {});
-  //{Family: 3}
 
-  return sortedSpecs;
+  const sortedSpecs = Object.entries(readySpecs)
+    .sort(([, a]: any, [, b]: any) => b - a)
+    .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
+  return await matchSpecs(sortedSpecs, counter);
+};
+
+const matchSpecs = async (sortedSpecs, counter) => {
+  try {
+    const specialists = await prisma.specialist.findMany({
+      include: {
+        specializations: true,
+      },
+    });
+
+    for (const spec in sortedSpecs) {
+      sortedSpecs[spec] /= counter;
+      for (let specialist of specialists) {
+        if (!specialist.hasOwnProperty("rank")) {
+          specialist.rank = 0;
+        }
+        if (specialist.specializations.some((obj) => obj.name === spec)) {
+          specialist.rank += sortedSpecs[spec];
+        }
+      }
+    }
+
+    specialists.sort((a, b) => b.rank - a.rank);
+
+    return {
+      Specializations: sortedSpecs,
+      Specialists: specialists,
+    };
+  } catch (error: any) {
+    console.log(error);
+  }
 };
 
 module.exports = { sendPrompt };

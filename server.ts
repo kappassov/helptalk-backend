@@ -17,6 +17,10 @@ const cors = require("cors");
 const http = require("http");
 const app = express();
 
+const redisClient = require("./app/services/redisClient");
+const rateLimit = require("express-rate-limit");
+const RedisStore = require("rate-limit-redis");
+
 const prisma = new PrismaClient();
 
 app.use(cors());
@@ -25,7 +29,17 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/", openaiRouter);
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // limit each IP to 10 requests per minute
+  store: new RedisStore({
+    client: redisClient,
+  }),
+  message: "Too many requests from this IP, please try again after a minute",
+});
+
+app.use(limiter);
+app.use("/", limiter, openaiRouter);
 app.use("/", authRouter);
 app.use("/", bookingRouter);
 app.use("/", adminRouter);
@@ -68,7 +82,7 @@ io.on("connection", (socket) => {
 });
 
 try {
-  server.listen(PORT, () => console.log("Listening on port %s", PORT));
+  server.listen(5432, () => console.log("Listening on port %s", PORT));
 } catch (e) {
   console.log(e);
 }

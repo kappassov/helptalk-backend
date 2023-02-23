@@ -9,7 +9,7 @@ axios.defaults.headers.common[
 ] = `Bearer ${process.env.OPENAI_API}`;
 
 const sendPrompt = async (req, res) => {
-  let prompt: string = req.body.prompt;
+  let prompt: string = req.body.prompt as string;
 
   try {
     const { data } = await axios.post(

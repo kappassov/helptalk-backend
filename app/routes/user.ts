@@ -2,8 +2,10 @@ export {};
 const express = require("express");
 const UserController  = require("../controllers/user.controller");
 const authMiddleware = require("../middlewares/auth-middleware");
-const adminRouter = express.Router();
+const userRouter = express.Router();
 
-adminRouter.get("/user/getByEmail", authMiddleware, UserController.getByEmail);
+userRouter.get("/user/getByEmail", authMiddleware, UserController.getByEmail);
+userRouter.post("/user/uploadAvatar", UserController.uploadAvatar);
 
-module.exports = adminRouter;
+
+module.exports = userRouter;

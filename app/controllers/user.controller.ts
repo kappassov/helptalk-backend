@@ -399,13 +399,14 @@ class UserController {
   };
 
 
-  static upload_avatar = async(req, res) => {
+  static uploadAvatar = async(req, res) => {
     try {
-      const user_email = req.body.email;
-      const avatar = req.body.avatar;
+      const {email, avatar} = req.body;
     
-      prisma.user.update({
-        where: { email: user_email },
+      const updated = await prisma.user.update({
+        where: { 
+          email: email 
+        },
         data: {
           avatar: avatar,
         },

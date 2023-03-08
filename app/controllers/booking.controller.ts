@@ -8,7 +8,7 @@ class BookingController {
       const post = await prisma.appointment.findMany();
       res.status(201).json(post);
     } catch (error: any) {
-      return res.status(500).json(error.message);
+      return res?.status(500)?.send(error.message);
     }
   };
 
@@ -73,7 +73,7 @@ class BookingController {
           });
           return res.status(201).json(post)
       } catch (error: any) {
-          return res.status(500).json(error.message);
+          return res?.status(500).json(error.message);
       }
   };
 

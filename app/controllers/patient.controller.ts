@@ -5,10 +5,21 @@ class PatientController {
   static getPatientById = async (req, res) => {
     try {
       const { id } = req.body;
-      const get = await prisma.patient.findUnique({
-        where: { id: id },
+      const patient = await prisma.patient.findUnique({
+        where: {
+          id: id,
+        },
+        include: {
+          user: {
+            select: {
+              avatar: true,
+            },
+          },
+          specializations: true,
+        },
       });
-      res.status(201).json(get);
+
+      res.status(201).json(patient);
     } catch (error: any) {
       return res.status(500).json(error.message);
     }

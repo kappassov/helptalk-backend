@@ -38,6 +38,7 @@ class SpecialistController {
             select: {
               phone: true,
               socialmedia_account: true,
+              avatar: true,
               socialmedia: {
                 select: {
                   name: true,

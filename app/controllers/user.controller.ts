@@ -41,6 +41,7 @@ class UserController {
         role: role.name,
         first_name: info["first_name"],
         last_name: info["last_name"],
+        avatar: db_result.avatar,
         balance: db_result.balance,
         token: Token.generateToken({ email }),
       });
@@ -316,6 +317,7 @@ class UserController {
         id: id,
         first_name: first_name,
         last_name: last_name,
+        avatar: db_result.avatar,
         email: userData.email,
         balance: db_result.balance,
         token: Token.generateToken({ email: userData.email }),
@@ -397,7 +399,6 @@ class UserController {
       throw e;
     }
   };
-
 
   static uploadAvatar = async(req, res) => {
     try {

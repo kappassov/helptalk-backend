@@ -322,8 +322,8 @@ class UserController {
         balance: db_result.balance,
         token: Token.generateToken({ email: userData.email }),
       });
-    } catch (e) {
-      console.log(e);
+    } catch (error: any) {
+      return res.status(503).json({ error: error.message });
     }
   };
 
@@ -395,8 +395,8 @@ class UserController {
         last_name: last_name,
         email: userData.email,
       });
-    } catch (e) {
-      throw e;
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
     }
   };
 

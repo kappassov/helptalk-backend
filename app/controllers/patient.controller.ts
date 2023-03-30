@@ -18,16 +18,17 @@ class PatientController {
         },
       });
 
-      res.status(201).json(patient);
+      return res.status(201).json(patient);
     } catch (error: any) {
       return res.status(500).json(error.message);
     }
   };
+
   static getAllPatients = async (req, res) => {
     try {
       const { id } = req.body;
       const get = await prisma.patient.findMany();
-      res.status(201).json(get);
+      return res.status(201).json(get);
     } catch (error: any) {
       return res.status(500).json(error.message);
     }

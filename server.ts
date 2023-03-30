@@ -82,7 +82,7 @@ io.on("connection", (socket) => {
 });
 
 try {
-  server.listen(5432, () => console.log("Listening on port %s", PORT));
+  server.listen(PORT, () => console.log("Listening on port %s", PORT));
 } catch (e) {
   console.log(e);
 }

@@ -26,8 +26,8 @@ class AdminController{
                     confirmed: answer,
                 },
             });
-            
-            return res.status(201).json(updated);
+
+            return res.status(200).json({ result: true });
         } catch (error: any) {
             return res.status(500).json(error.message);
         }

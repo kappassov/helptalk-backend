@@ -40,7 +40,7 @@ class AdminController{
 
             const mailOptions = {
                 from: '"Helptalk" <helptalk@gmail.com>',
-                to: "dilnaz010220@gmail.com",
+                to: email,
                 subject: 'HelpTalk registration result',
                 text: 'Dear, ' + specialist.first_name + " " + specialist.last_name + ", \n\nCongratulations, you have been approved by HelpTalk, and now you can " +
                 "login into your accound and work with our clients freely. Hope you will enjoy your work, and thank you for cooperation! \n\n Kind regards, \n HelpTalk Admin"
@@ -70,7 +70,7 @@ class AdminController{
 
             const mailOptions = {
                 from: '"Helptalk" <helptalk.kz@gmail.com>',
-                to: "dilnaz010220@gmail.com",
+                to: email,
                 subject: 'HelpTalk registration result',
                 text: 'Dear, ' + specialist.first_name + " " + specialist.last_name + ", \n\nWe regret to inform that you have been declined by HelpTalk, die to certain reasons." +
                 "\n\nOur admin sends you the following message: " + message + ". Thank you for your efforts! \n\n Kind regards, \n HelpTalk Admin"

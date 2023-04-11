@@ -5,6 +5,7 @@ const authMiddleware = require("../middlewares/auth-middleware");
 const adminRouter = express.Router();
 
 adminRouter.get("/admin/getAll", authMiddleware, AdminController.getSpecialists);
-adminRouter.post("/admin/approveSpecialist", authMiddleware, AdminController.approveSpecialist);
+adminRouter.post("/admin/approveSpecialist", AdminController.approveSpecialist);
+adminRouter.post("/admin/declineSpecialist", AdminController.declineSpecialist);
 
 module.exports = adminRouter;

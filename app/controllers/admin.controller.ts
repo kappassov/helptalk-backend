@@ -1,6 +1,17 @@
 export {};
 const express = require("express");
 const prisma = require("../models/prisma-client");
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    secure: false,
+    requireTLS: true,
+    auth: {
+      user: 'helptalk.kz@gmail.com',
+      pass: 'krpvudfjcbqbmyse'
+    }
+});
 
 class AdminController{
     static getSpecialists = async (req, res) => {
@@ -14,7 +25,7 @@ class AdminController{
 
     static approveSpecialist = async (req, res) => {
         try {
-            const {email, answer}  = req.body;
+            const {email}  = req.body;
 
             const specialist = await prisma.specialist.findFirst({
                 where: {email: email}
@@ -23,8 +34,24 @@ class AdminController{
             const updated = await prisma.specialist.update({
                 where: { id: specialist.id },
                 data: {
-                    confirmed: answer,
+                    confirmed: true,
                 },
+            });
+
+            const mailOptions = {
+                from: '"Helptalk" <helptalk@gmail.com>',
+                to: email,
+                subject: 'HelpTalk registration result',
+                text: 'Dear, ' + specialist.first_name + " " + specialist.last_name + ", \n\nCongratulations, you have been approved by HelpTalk, and now you can " +
+                "login into your accound and work with our clients freely. Hope you will enjoy your work, and thank you for cooperation! \n\n Kind regards, \n HelpTalk Admin"
+            };
+              
+            transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent!');
+                }
             });
 
             return res.status(200).json({ result: true });
@@ -32,6 +59,59 @@ class AdminController{
             return res.status(500).json(error.message);
         }
     }
+
+    static declineSpecialist = async (req, res) => {
+        try {
+            const {email, message}  = req.body;
+
+            const specialist = await prisma.specialist.findFirst({
+                where: {email: email}
+              });
+
+            const mailOptions = {
+                from: '"Helptalk" <helptalk.kz@gmail.com>',
+                to: email,
+                subject: 'HelpTalk registration result',
+                text: 'Dear, ' + specialist.first_name + " " + specialist.last_name + ", \n\nWe regret to inform that you have been declined by HelpTalk, die to certain reasons." +
+                "\n\nOur admin sends you the following message: " + message + ". Thank you for your efforts! \n\n Kind regards, \n HelpTalk Admin"
+            };
+              
+            transporter.sendMail(mailOptions, function(error, info){
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent!');
+                }
+            });
+
+            const deleteSpecialist = prisma.specialist.deleteMany({
+                where: {
+                  id: specialist.id,
+                },
+              })
+              
+              const deleteDocument = prisma.document.deleteMany({
+                where: {
+                  specialist_id: specialist.id,
+                },
+              })
+
+              const deleteUser = prisma.user.delete({
+                where: {
+                  email: email,
+                },
+              })
+              
+              const transaction = await prisma.$transaction([deleteSpecialist, deleteDocument, deleteUser])
+
+
+            return res.status(200).json({ result: true });
+        } catch (error: any) {
+            return res.status(500).json(error.message);
+        }
+    }
+
+    
 }
 
 module.exports = AdminController;

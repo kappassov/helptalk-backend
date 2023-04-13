@@ -23,6 +23,17 @@ class AdminController{
         }
     }
 
+    static getUnconfirmedSpecialists = async (req, res) => {
+        try {
+            const specialists = await prisma.specialist.findMany({
+                where: {confirmed: false}
+            })
+            return res.status(201).json(specialists)
+        } catch (error: any) {
+            return res.status(500).json(error.message);
+        }
+    }
+
     static approveSpecialist = async (req, res) => {
         try {
             const {email}  = req.body;

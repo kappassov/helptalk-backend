@@ -83,7 +83,7 @@ class AdminController{
                 from: '"Helptalk" <helptalk.kz@gmail.com>',
                 to: email,
                 subject: 'HelpTalk registration result',
-                text: 'Dear, ' + specialist.first_name + " " + specialist.last_name + ", \n\nWe regret to inform that you have been declined by HelpTalk, die to certain reasons." +
+                text: 'Dear, ' + specialist.first_name + " " + specialist.last_name + ", \n\nWe regret to inform that you have been declined by HelpTalk, due to certain reasons." +
                 "\n\nOur admin sends you the following message: " + message + ". Thank you for your efforts! \n\n Kind regards, \n HelpTalk Admin"
             };
               
@@ -94,6 +94,18 @@ class AdminController{
                     console.log('Email sent!');
                 }
             });
+
+            const deleteRating = prisma.rating.deleteMany({
+                where: {
+                  specialist_id: specialist.id,
+                },
+              })
+
+              const deleteReview = prisma.review.deleteMany({
+                where: {
+                  specialist_id: specialist.id,
+                },
+              })
 
             const deleteDocument = prisma.document.deleteMany({
                 where: {
@@ -113,7 +125,7 @@ class AdminController{
                 },
               })
               
-              const transaction = await prisma.$transaction([deleteDocument,deleteSpecialist, deleteUser])
+              const transaction = await prisma.$transaction([deleteRating, deleteReview, deleteDocument,deleteSpecialist, deleteUser])
 
 
             return res.status(200).json({ result: true });

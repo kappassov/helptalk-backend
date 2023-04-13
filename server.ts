@@ -38,7 +38,7 @@ const limiter = rateLimit({
   message: "Too many requests from this IP, please try again after a minute",
 });
 
-app.use(limiter);
+//app.use(limiter);
 app.use("/", limiter, openaiRouter);
 app.use("/", authRouter);
 app.use("/", bookingRouter);

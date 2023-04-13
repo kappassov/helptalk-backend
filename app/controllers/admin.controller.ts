@@ -95,15 +95,15 @@ class AdminController{
                 }
             });
 
+            const deleteDocument = prisma.document.deleteMany({
+                where: {
+                  specialist_id: specialist.id,
+                },
+              })
+
             const deleteSpecialist = prisma.specialist.deleteMany({
                 where: {
                   id: specialist.id,
-                },
-              })
-              
-              const deleteDocument = prisma.document.deleteMany({
-                where: {
-                  specialist_id: specialist.id,
                 },
               })
 
@@ -113,7 +113,7 @@ class AdminController{
                 },
               })
               
-              const transaction = await prisma.$transaction([deleteSpecialist, deleteDocument, deleteUser])
+              const transaction = await prisma.$transaction([deleteDocument,deleteSpecialist, deleteUser])
 
 
             return res.status(200).json({ result: true });

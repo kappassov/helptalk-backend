@@ -7,6 +7,17 @@ const ApiError = require("../services/error");
 const bcrypt = require("bcryptjs");
 const Token = require("../services/token");
 const prisma = require("../models/prisma-client");
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  secure: false,
+  requireTLS: true,
+  auth: {
+    user: 'helptalk.kz@gmail.com',
+    pass: 'krpvudfjcbqbmyse'
+  }
+});
 
 class UserController {
   static login = async (req, res) => {
@@ -185,6 +196,7 @@ class UserController {
         description,
         price,
         path,
+        profileUrl,
       } = req.body;
 
       const role = await prisma.role.findUnique({
@@ -251,6 +263,22 @@ class UserController {
         where: {
           email: email,
         },
+      });
+
+      const mailOptions = {
+          from: '"Helptalk" <helptalk@gmail.com>',
+          to: "yerkanat.makhayev@nu.edu.kz",
+          subject: 'HelpTalk: New Specialist',
+          text: 'Dear Admin, \n\nThe new specialist - ' + first_name + " " + last_name + ' -  has been registered on our platform. To review this specialist, please go to: ' + profileUrl +
+          '. \n\nKind regards, \nHelpTalk'
+      };
+        
+      transporter.sendMail(mailOptions, function(error, info){
+          if (error) {
+              console.log(error);
+          } else {
+              console.log('Email sent!');
+          }
       });
 
       return res.status(201).json({

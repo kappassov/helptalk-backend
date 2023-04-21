@@ -11,15 +11,8 @@ bookingRouter.get("/book/getall", authMiddleware, BookingController.get_all);
 
 bookingRouter.post(
   "/book/getbypatientid",
-  authMiddleware,
   BookingController.get_by_patient_id
 );
-
-bookingRouter.post(
-  "/book/reviewSubmitted",
-  authMiddleware, 
-  BookingController.review_submitted
-)
 
 bookingRouter.post(
   "/book/getbyspecialistid",

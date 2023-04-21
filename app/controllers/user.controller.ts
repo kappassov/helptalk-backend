@@ -269,7 +269,7 @@ class UserController {
           from: '"Helptalk" <helptalk@gmail.com>',
           to: "yerkanat.makhayev@nu.edu.kz",
           subject: 'HelpTalk: New Specialist',
-          text: 'Dear Admin, \n\nThe new specialist - ' + first_name + " " + last_name + ' -  has been registered on our platform. To review this specialist, please go to: ' + profileUrl +
+          text: 'Dear Admin, \n\nThe new specialist - ' + first_name + " " + last_name + ' -  has been registered on our platform. ' +
           '. \n\nKind regards, \nHelpTalk'
       };
         

@@ -22,6 +22,14 @@ const rateLimit = require("express-rate-limit");
 const RedisStore = require("rate-limit-redis");
 
 const prisma = new PrismaClient();
+const limiter = rateLimit({
+  windowMs: 60 * 1000, 
+  max: 50, 
+  store: new RedisStore({
+    client: redisClient,
+  }),
+  message: "Too many requests from this IP, please try again after a minute",
+});
 
 app.use(cors());
 
@@ -29,16 +37,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
-const limiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 10, // limit each IP to 10 requests per minute
-  store: new RedisStore({
-    client: redisClient,
-  }),
-  message: "Too many requests from this IP, please try again after a minute",
-});
-
-//app.use(limiter);
 app.use("/", limiter, openaiRouter);
 app.use("/", authRouter);
 app.use("/", bookingRouter);

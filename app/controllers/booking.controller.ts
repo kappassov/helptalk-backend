@@ -13,26 +13,6 @@ class BookingController {
     }
   };
 
-  static review_submitted = async(req, res) => {
-    try {
-      const {appointment_id} = req.body;
-      const appointments = await prisma.review.findMany({
-          where: {
-            appointment_id: appointment_id
-          }
-        }
-      );
-
-      if(appointments.length > 0){
-        return res.status(201).json({ result: true});
-      }else{
-        return res.status(201).json({ result: false });
-      }
-    } catch (error: any) {
-      return res.status(500).json(error.message);
-    }
-  }
-
   static get_by_patient_id = async (req, res) => {
     try {
       const { id } = req.body;
@@ -47,6 +27,7 @@ class BookingController {
               last_name: true,
             },
           },
+          reviews: true 
         },
       });
       return res.status(201).json(appointment);

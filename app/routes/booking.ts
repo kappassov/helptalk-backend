@@ -16,6 +16,12 @@ bookingRouter.post(
 );
 
 bookingRouter.post(
+  "/book/reviewSubmitted",
+  authMiddleware, 
+  BookingController.review_submitted
+)
+
+bookingRouter.post(
   "/book/getbyspecialistid",
   authMiddleware,
   BookingController.get_by_specialist_id

@@ -47,6 +47,12 @@ class SpecialistController {
             },
           },
           specializations: true,
+          ratings: true, 
+          appointments: {
+            select: {
+              reviews: true
+            }
+          }
         },
       });
       return res.status(201).json(specialist);

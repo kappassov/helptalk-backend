@@ -19,6 +19,14 @@ class BookingController {
         where: {
           patient_id: id,
         },
+        include: {
+          specialist: {
+            select: {
+              first_name: true,
+              last_name: true,
+            },
+          },
+        },
       });
       return res.status(201).json(appointment);
     } catch (error: any) {

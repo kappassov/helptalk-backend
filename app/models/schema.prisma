@@ -85,7 +85,7 @@ model Specialist {
   description         String
   price               Float  
   confirmed           Boolean
-  ratings         Rating[]
+  ratings             Rating[]
   appointments        Appointment[]
   documents           Document[]
 }

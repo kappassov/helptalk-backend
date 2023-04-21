@@ -86,6 +86,7 @@ const matchSpecs = async (sortedSpecs, counter) => {
     const specialists = await prisma.specialist.findMany({
       include: {
         specializations: true,
+        ratings: true
       },
     });
 

@@ -25,7 +25,7 @@ const specs = {
     "heartbreak",
     "emotional support",
   ],
-  "Family Issues": [
+  "Family issues": [
     "family conflict",
     "parent-child relationships",
     "communication problems",

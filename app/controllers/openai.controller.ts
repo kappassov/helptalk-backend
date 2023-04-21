@@ -89,14 +89,14 @@ const matchSpecs = async (sortedSpecs, counter) => {
         ratings: true
       },
     });
-
+    console.log(sortedSpecs)
     for (const spec in sortedSpecs) {
       sortedSpecs[spec] /= counter;
       for (let specialist of specialists) {
         if (!specialist.hasOwnProperty("rank")) {
           specialist.rank = 0;
         }
-        if (specialist.specializations.some((obj) => obj.name === spec)) {
+        if (specialist.specializations.some((obj) => obj.name == spec)) {
           specialist.rank += sortedSpecs[spec];
         }
       }

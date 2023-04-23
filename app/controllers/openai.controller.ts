@@ -16,7 +16,6 @@ const sendPrompt = async (req, res) => {
       "https://api.openai.com/v1/completions",
       {
         model: "text-davinci-003",
-        //model: "text-chat-davinci-002-20221122",
         prompt: `Give me keywords of \"${prompt}\" issues`,
         temperature: 0.7,
         max_tokens: 256,
